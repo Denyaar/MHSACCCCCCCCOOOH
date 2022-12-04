@@ -36,9 +36,10 @@ class LoansController extends  Controller
     public function index()
     {
         $nextofkin = Loan::withoutTrashed()
+            ->where('','')
             ->whereNull('deleted_at')->get();
 
-        $response = ['status'=>true,'message'=>'','user' => [$nextofkin]];
+        $response = ['status'=>true,'message'=>'','data' => $nextofkin];
         return response($response, 200);
 
     }
@@ -128,7 +129,7 @@ class LoansController extends  Controller
             $loans = Loan::create($request->toArray());
             $loans->save();
 
-            $response = ['status'=>true,'message'=>'Data Saved Successfully','data' => [$loans]];
+            $response = ['status'=>true,'message'=>'Data Saved Successfully','data' => $loans];
             return response($response, 200);
         }
     }
@@ -233,7 +234,7 @@ class LoansController extends  Controller
             $loans->save();
 
             if($loans->save()){
-                $response = ['status'=>true,'message'=>'Loan  Updated Successfully','data' => [$loans]];
+                $response = ['status'=>true,'message'=>'Loan  Updated Successfully','data' => $loans];
                 return response($response, 200);
             }
 
@@ -280,7 +281,7 @@ class LoansController extends  Controller
         $loan = Loan::findOrFail($id);
         $loan->delete();
 
-        return  response(['status'=>true,'message'=>'Loan Details Deleted Successfully', 'data'=>[]]);
+        return  response(['status'=>true,'message'=>'Loan Details Deleted Successfully', 'data'=>'']);
     }
 
 }

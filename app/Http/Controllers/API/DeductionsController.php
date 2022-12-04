@@ -36,7 +36,7 @@ class DeductionsController extends Controller
     {
         $deductions = Deductions::all();
 
-        $response = ['status'=>true,'message'=>'','user' => [$deductions]];
+        $response = ['status'=>true,'message'=>'','data' => $deductions];
         return response($response, 200);
 
     }
@@ -115,7 +115,7 @@ class DeductionsController extends Controller
             $deductions = Deductions::create($request->toArray());
             $deductions->save();
 
-            $response = ['status'=>true,'message'=>'Data Saved Successfully','data' => [$deductions]];
+            $response = ['status'=>true,'message'=>'Data Saved Successfully','data' => $deductions];
             return response($response, 200);
         }
     }
@@ -207,7 +207,7 @@ class DeductionsController extends Controller
             $deductions->save();
 
             if($deductions->save()){
-                $response = ['status'=>true,'message'=>'Deductions Details Updated Successfully','data' => [$deductions]];
+                $response = ['status'=>true,'message'=>'Deductions Details Updated Successfully','data' => $deductions];
                 return response($response, 200);
             }
 
@@ -254,7 +254,7 @@ class DeductionsController extends Controller
         $deductions = Deductions::findOrFail($id);
         $deductions->delete();
 
-        return  response(['status'=>true,'message'=>'Deductions Details Deleted Successfully', 'data'=>[]]);
+        return  response(['status'=>true,'message'=>'Deductions Details Deleted Successfully', 'data'=>'']);
     }
 
 }

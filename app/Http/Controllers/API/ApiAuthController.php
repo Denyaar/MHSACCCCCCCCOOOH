@@ -93,7 +93,7 @@ class ApiAuthController extends Controller
 
         $token = $user->createToken('MHSACCO Grant Client')->accessToken;
 
-        $response = ['status'=>true,'message'=>'Welcome '.$user->first_name,'token' => $token,'user' => [$user]];
+        $response = ['status'=>true,'message'=>'Welcome '.$user->first_name,'token' => $token,'data' => $user];
         return response($response, 200);
     }
 
@@ -159,11 +159,11 @@ class ApiAuthController extends Controller
                     return response($response, 422);
                 }
             } else {
-                $response = ["status"=>false,"message" =>'User does not exist','data'=>[]];
+                $response = ["status"=>false,"message" =>'User does not exist','data'=>''];
                 return response($response, 422);
             }
         }else {
-            $response = ["status"=>false,"message" =>'You are not Admin','data'=>[]];
+            $response = ["status"=>false,"message" =>'You are not Admin','data'=>''];
             return response($response, 403);
         }
 
@@ -222,14 +222,14 @@ class ApiAuthController extends Controller
         if ($user) {
             if (Hash::check($request->password, $user->password)) {
                 $token = $user->createToken('MHSACCO Password Grant Client')->accessToken;
-                $response = ["status"=>true,'user' => $user, 'token' => $token];
+                $response = ["status"=>true,'data' => $user, 'token' => $token];
                 return response($response, 200);
             } else {
                 $response = ["status"=>false,"message" => "Password mismatch"];
                 return response($response, 422);
             }
         } else {
-            $response = ["status"=>false,"message" =>'User does not exist','data'=>[]];
+            $response = ["status"=>false,"message" =>'User does not exist','data'=>''];
             return response($response, 422);
         }
     }

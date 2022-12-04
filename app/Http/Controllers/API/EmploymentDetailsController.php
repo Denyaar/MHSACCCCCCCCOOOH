@@ -37,7 +37,7 @@ class EmploymentDetailsController extends  Controller
     {
         $employmentDetails = EmploymentDetails::all();
 
-        $response = ['status' => true, 'message' => '', 'user' => [$employmentDetails]];
+        $response = ['status' => true, 'message' => '', 'data' => $employmentDetails];
         return response($response, 200);
 
     }
@@ -124,7 +124,7 @@ class EmploymentDetailsController extends  Controller
             $employmentDetails = EmploymentDetails::create($request->toArray());
             $employmentDetails->save();
 
-            $response = ['status' => true, 'message' => 'Data Saved Successfully', 'data' => [$employmentDetails]];
+            $response = ['status' => true, 'message' => 'Data Saved Successfully', 'data' => $employmentDetails];
             return response($response, 200);
         }
     }
@@ -224,7 +224,7 @@ class EmploymentDetailsController extends  Controller
             $employmentDetails->save();
 
             if ($employmentDetails->save()) {
-                $response = ['status' => true, 'message' => 'User Details Details Updated Successfully', 'data' => [$employmentDetails]];
+                $response = ['status' => true, 'message' => 'User Details Details Updated Successfully', 'data' => $employmentDetails];
                 return response($response, 200);
             }
 
@@ -272,6 +272,6 @@ class EmploymentDetailsController extends  Controller
         $employmentdetails->delete();
 
 
-        return response(['status' => true, 'message' => 'User Details Deleted Successfully', 'data' => []]);
+        return response(['status' => true, 'message' => 'User Details Deleted Successfully', 'data' => '']);
     }
 }

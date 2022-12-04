@@ -36,7 +36,7 @@ class BankingDetailsController extends  Controller
     {
         $bankingdetails = BankingDetails::all();
 
-        $response = ['status'=>true,'message'=>'','user' => [$bankingdetails]];
+        $response = ['status'=>true,'message'=>'','data' => $bankingdetails];
         return response($response, 200);
 
     }
@@ -121,7 +121,7 @@ class BankingDetailsController extends  Controller
             $bankingdetails = BankingDetails::create($request->toArray());
             $bankingdetails->save();
 
-            $response = ['status'=>true,'message'=>'Banking Details Saved Successfully','data' => [$bankingdetails]];
+            $response = ['status'=>true,'message'=>'Banking Details Saved Successfully','data' => $bankingdetails];
             return response($response, 200);
         }
     }
@@ -220,7 +220,7 @@ class BankingDetailsController extends  Controller
             $bankingdetails->save();
 
             if($bankingdetails->save()){
-                $response = ['status'=>true,'message'=>'Banking Details  Updated Successfully','data' => [$bankingdetails]];
+                $response = ['status'=>true,'message'=>'Banking Details  Updated Successfully','data' => $bankingdetails];
                 return response($response, 200);
             }
 
@@ -267,7 +267,7 @@ class BankingDetailsController extends  Controller
         $bankingdetails = BankingDetails::findOrFail($id);
         $bankingdetails->delete();
 
-        return  response(['status'=>true,'message'=>'Banking  Details Deleted Successfully', 'data'=>[]]);
+        return  response(['status'=>true,'message'=>'Banking  Details Deleted Successfully', 'data'=>'']);
     }
 
 }

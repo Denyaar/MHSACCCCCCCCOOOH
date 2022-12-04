@@ -38,7 +38,7 @@ class ApiUserDetails  extends  Controller
         $nextofkin = UserDetails::withoutTrashed()
             ->whereNull('deleted_at')->get();
 
-        $response = ['status'=>true,'message'=>'','user' => [$nextofkin]];
+        $response = ['status'=>true,'message'=>'','data' => $nextofkin];
         return response($response, 200);
 
     }
@@ -126,7 +126,7 @@ class ApiUserDetails  extends  Controller
             $userDetails = UserDetails::create($request->toArray());
             $userDetails->save();
 
-            $response = ['status'=>true,'message'=>'Data Saved Successfully','data' => [$userDetails]];
+            $response = ['status'=>true,'message'=>'Data Saved Successfully','data' => $userDetails];
             return response($response, 200);
         }
     }
@@ -226,7 +226,7 @@ class ApiUserDetails  extends  Controller
             $userDetails->save();
 
             if($userDetails->save()){
-                $response = ['status'=>true,'message'=>'User Details Details Updated Successfully','data' => [$userDetails]];
+                $response = ['status'=>true,'message'=>'User Details Details Updated Successfully','data' =>$userDetails];
                 return response($response, 200);
             }
 
@@ -273,7 +273,7 @@ class ApiUserDetails  extends  Controller
         $userDetails = UserDetails::findOrFail($id);
         $userDetails->delete();
 
-        return  response(['status'=>true,'message'=>'User Details Deleted Successfully', 'data'=>[]]);
+        return  response(['status'=>true,'message'=>'User Details Deleted Successfully', 'data'=>'']);
     }
 
 }

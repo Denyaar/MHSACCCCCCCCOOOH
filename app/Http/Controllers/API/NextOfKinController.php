@@ -38,7 +38,7 @@ class NextOfKinController extends Controller
     {
         $nextofkin = NextOfKin::all();
 
-        $response = ['status' => true, 'message' => '', 'user' => [$nextofkin]];
+        $response = ['status' => true, 'message' => '', 'data' => [$nextofkin]];
         return response($response, 200);
 
     }
