@@ -64,11 +64,12 @@ class BankingDetailsController extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"bank","bank_branch","branch_code","acc_name","acc_number","acc_type"},
+     *               required={"bank","bank_branch","branch_code","acc_name","acc_number","status","acc_type"},
      *               @OA\Property(property="bank", type="text"),
      *               @OA\Property(property="bank_branch", type="text"),
      *               @OA\Property(property="branch_code", type="text"),
      *               @OA\Property(property="acc_name", type="text"),
+     *               @OA\Property(property="status", type="text"),
      *               @OA\Property(property="acc_number", type="text"),
      *               @OA\Property(property="acc_type", type="text"),
      *
@@ -115,6 +116,7 @@ class BankingDetailsController extends  Controller
             $request['bank_branch']=  $request->input('bank_branch');
             $request['branch_code']=  $request->input('branch_code');
             $request['acc_name']=  $request->input('acc_name');
+            $request['status']=0;
             $request['acc_number']=  $request->input('acc_number');
             $request['acc_type']=  $request->input('acc_type');
 
@@ -127,14 +129,35 @@ class BankingDetailsController extends  Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\BankingDetails  $bankingdetails
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *      path="/api/bankingdetail/{id}",
+     *      operationId="getUserBankingDetails",
+     *      tags={"BankingDetails"},
+     *      summary="Employee Banking Details",
+     *      description="Returns Employee Banking Details",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
      */
+
     public function show($id)
     {
-        //
+        $bankingdetails = BankingDetails::findorfail($id);
+
+        $response = ['status'=>true,'message'=>'','data' => $bankingdetails];
+        return response($response, 200);
+
     }
 
     /**
@@ -162,11 +185,12 @@ class BankingDetailsController extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"bank","bank_branch","branch_code","acc_name","acc_number","acc_type"},
+     *               required={"bank","bank_branch","branch_code","acc_name","acc_number","acc_type","status"},
      *               @OA\Property(property="bank", type="text"),
      *               @OA\Property(property="bank_branch", type="text"),
      *               @OA\Property(property="branch_code", type="text"),
      *               @OA\Property(property="acc_name", type="text"),
+     *               @OA\Property(property="status", type="text"),
      *               @OA\Property(property="acc_number", type="text"),
      *               @OA\Property(property="acc_type", type="text"),
      *
@@ -214,6 +238,7 @@ class BankingDetailsController extends  Controller
             $bankingdetails->bank_branch =  $request->input('bank_branch');
             $bankingdetails->branch_code =  $request->input('branch_code');
             $bankingdetails->acc_name =  $request->input('acc_name');
+            $bankingdetails->status =  $request->input('status');
             $bankingdetails->acc_number =  $request->input('acc_number');
             $bankingdetails->acc_type =  $request->input('acc_type');
 
@@ -225,6 +250,45 @@ class BankingDetailsController extends  Controller
             }
 
         }
+    }
+
+    /**
+     * @OA\Get(
+     *      path="/api/approve_bankingdetails/{id}",
+     *      operationId="approvebankingdetails",
+     *      tags={"BankingDetails"},
+     *      summary="Approve banking details",
+     *      description="Return Approved banking Details",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
+     */
+
+    public function Approve($id)
+    {
+        $banking_details = BankingDetails::findorfail($id)->WithoutTrashed();
+
+        if($banking_details->status == 1){
+            return response(['status' => false, 'message' => 'Banking Details have been Approved Already!  ',
+                'data' =>$banking_details ]);
+        }
+        else{
+            $banking_details->status =1;
+            $banking_details->save();
+            return response(['status' => true, 'message' => 'Banking Details Approval Successfully', 'data' => $banking_details]);
+        }
+
     }
 
     /**

@@ -55,6 +55,7 @@ class EmploymentDetails extends Model
         'employer_phone',
         'position_at_work',
         'grade',
+        'status',
         'department',
         'date_of_employment',
     ];
@@ -72,6 +73,7 @@ class EmploymentDetails extends Model
         'employer_phone'                        => 'string',
         'position_at_work'                       => 'string',
         'grade'                                 => 'string',
+        'status'                                 => 'boolean',
         'department'                            => 'string',
         'date_of_employment'                    => 'date',
     ];

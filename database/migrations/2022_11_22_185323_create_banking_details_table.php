@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('bank_branch');
             $table->string('branch_code');
             $table->string('acc_name');
+            $table->boolean('status');
             $table->string('acc_number');
             $table->string('acc_type');
             $table->timestamps();

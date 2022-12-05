@@ -121,14 +121,33 @@ class DeductionsController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Deductions  $deductions
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *      path="/api/deductions/{id}",
+     *      operationId="getOneDeductionsList",
+     *      tags={"Deductions"},
+     *      summary="Get Deductions Details",
+     *      description="Returns  Deduction",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
      */
-    public function show(Deductions $deductions)
+    public function show($id)
     {
-        //
+        $deductions = Deductions::findorfail($id);
+
+        $r= ['status' => true,'message'=>'Deduction Details','data'=>$deductions];
+        return response($r,200);
     }
 
     /**

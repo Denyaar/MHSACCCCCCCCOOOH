@@ -133,14 +133,34 @@ class NextOfKinController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param \App\Models\NextOfKin $nextOfKin
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *      path="/api/nextofkin/{id}",
+     *      operationId="getEmployeenextofkinList",
+     *      tags={"NextOfKin"},
+     *      summary="Get Employee Next of kin Details",
+     *      description="Returns Details of Next of kins",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
      */
-    public function show(NextOfKin $nextOfKin)
+    public function show($id)
     {
-        //
+        $nextOfKin = NextOfKin::findorfail($id);
+
+        $response=['status'=>true,'message'=>'Employee Next of Kin Details','data'=>$nextOfKin];
+
+        return response($response, 200);
     }
 
     /**

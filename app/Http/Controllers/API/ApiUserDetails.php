@@ -35,10 +35,10 @@ class ApiUserDetails  extends  Controller
      */
     public function index()
     {
-        $nextofkin = UserDetails::withoutTrashed()
+        $userDetails = UserDetails::withoutTrashed()
             ->whereNull('deleted_at')->get();
 
-        $response = ['status'=>true,'message'=>'','data' => $nextofkin];
+        $response = ['status'=>true,'message'=>'','data' => $userDetails];
         return response($response, 200);
 
     }
@@ -66,12 +66,13 @@ class ApiUserDetails  extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"tittle","mobile","source_of_income","nat_id","date_of_birth", "gender","address"},
+     *               required={"tittle","mobile","source_of_income","nat_id","date_of_birth", "gender","status","address"},
      *               @OA\Property(property="tittle", type="text"),
      *               @OA\Property(property="mobile", type="text"),
      *               @OA\Property(property="nat_id", type="text"),
      *               @OA\Property(property="date_of_birth", type="date"),
      *               @OA\Property(property="gender", type="text"),
+     *               @OA\Property(property="status", type="text"),
      *               @OA\Property(property="address", type="text"),
      *               @OA\Property(property="source_of_income", type="text"),
      *            ),
@@ -119,6 +120,7 @@ class ApiUserDetails  extends  Controller
             $request['date_of_birth']=  $request->input('date_of_birth');
             $request['mobile']=  $request->input('mobile');
             $request['gender']=  $request->input('gender');
+            $request['status']=0;
             $request['address']=  $request->input('address');
             $request['source_of_income']=  $request->input('source_of_income');
             $request['tittle']=  $request->input('tittle');
@@ -132,14 +134,35 @@ class ApiUserDetails  extends  Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\UserDetails  $userDetails
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *      path="/api/userdetails/{id}",
+     *      operationId="getspecificuserdetails",
+     *      tags={"UserDetails"},
+     *      summary="Specific User  Details",
+     *      description="Returns Specific Users details",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
      */
-    public function show(UserDetails $userDetails)
+    public function show($id)
     {
-        //
+        $userDetails = UserDetails::findorfail($id);
+
+        $response = ['status'=>true,'message'=>'','data' => $userDetails];
+        return response($response, 200);
+
+
     }
 
     /**
@@ -167,12 +190,13 @@ class ApiUserDetails  extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"tittle","source_of_income","mobile","nat_id","date_of_birth", "gender","address"},
+     *               required={"tittle","source_of_income","mobile","nat_id","date_of_birth","status","gender","address"},
      *               @OA\Property(property="tittle", type="text"),
      *               @OA\Property(property="mobile", type="text"),
      *               @OA\Property(property="nat_id", type="text"),
      *               @OA\Property(property="date_of_birth", type="date"),
      *               @OA\Property(property="gender", type="text"),
+     *               @OA\Property(property="status", type="text"),
      *               @OA\Property(property="address", type="text"),
      *               @OA\Property(property="source_of_income", type="text"),
      *            ),
@@ -220,6 +244,7 @@ class ApiUserDetails  extends  Controller
             $userDetails->date_of_birth =  $request->input('date_of_birth');
             $userDetails->mobile =  $request->input('mobile');
             $userDetails->gender =  $request->input('gender');
+            $userDetails->status =  $request->input('status');
             $userDetails->source_of_income =  $request->input('source_of_income');
             $userDetails->nat_id =  $request->input('nat_id');
             $userDetails->address =  $request->input('address');
@@ -232,6 +257,48 @@ class ApiUserDetails  extends  Controller
 
         }
     }
+
+
+
+    /**
+     * @OA\Get(
+     *      path="/api/user_approve/{id}",
+     *      operationId="approveuserdetails",
+     *      tags={"UserDetails"},
+     *      summary="Approve User Details",
+     *      description="Returns Approved User Details",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
+     */
+
+    public function Approve($id)
+    {
+        $approve_userDetails = UserDetails::findorfail($id)->WithoutTrashed();
+
+        if($approve_userDetails->status == 1){
+            return response(['status' => false, 'message' => 'Loan has been Approved Already!  ',
+                'data' =>$approve_userDetails ]);
+        }
+        else{
+            $approve_userDetails->status =1;
+            $approve_userDetails->save();
+            return response(['status' => true, 'message' => 'Loan Approval Successfully ', 'data' => $approve_userDetails]);
+        }
+
+    }
+
 
     /**
      * @OA\Delete(
@@ -274,6 +341,50 @@ class ApiUserDetails  extends  Controller
         $userDetails->delete();
 
         return  response(['status'=>true,'message'=>'User Details Deleted Successfully', 'data'=>'']);
+    }
+
+    /**
+     * @OA\Delete(
+     * path="/api/forcedeleteuserdetails/{id}",
+     * operationId="userdetailspermdelete",
+     * tags={"UserDetails"},
+     * summary="Permanantly Delete User  Details",
+     * description="Deleting User  details Permanantly",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Project id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=204,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Resource Not Found"
+     *      )
+     * )
+     */
+
+    public function ForceDelete($id)
+    {
+        $loan = UserDetails::findOrFail($id);
+        $loan->forceDelete();
+
+        return  response(['status'=>true,'message'=>'Loan Permanently Deleted Successfully', 'data'=>'']);
     }
 
 }
