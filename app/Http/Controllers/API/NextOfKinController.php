@@ -111,8 +111,9 @@ class NextOfKinController extends Controller
                 'address' => 'required|max:255'
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $request['user_id'] = Auth::user()->id;
@@ -234,8 +235,9 @@ class NextOfKinController extends Controller
                 'address' => 'required|max:255'
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $nextOfKin->user_id = Auth::user()->id;

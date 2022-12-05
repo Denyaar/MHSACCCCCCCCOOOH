@@ -109,8 +109,9 @@ class EmploymentDetailsController extends  Controller
                 'employer_address' => 'required|max:255'
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $request['user_id'] = Auth::user()->id;
@@ -232,8 +233,9 @@ class EmploymentDetailsController extends  Controller
                 'employer_address' => 'required|max:255'
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $employmentDetails->user_id = Auth::user()->id;
@@ -284,8 +286,9 @@ class EmploymentDetailsController extends  Controller
         $employmentdetails = EmploymentDetails::findorfail($id)->WithoutTrashed();
 
         if($employmentdetails->status == 1){
-            return response(['status' => false, 'message' => 'Employment Details Were Approved Already!  ',
-                'data' =>$employmentdetails ]);
+            $response = (['status' => false, 'message' => 'Employment Details Were Approved Already!',
+                'data' => $employmentdetails]);
+            return  response($response,422);
         }
         else{
             $employmentdetails->status =1;

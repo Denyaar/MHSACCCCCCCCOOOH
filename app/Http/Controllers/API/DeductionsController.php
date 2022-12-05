@@ -102,8 +102,9 @@ class DeductionsController extends Controller
                 'monthly_saving' => 'required',
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
 
@@ -214,8 +215,9 @@ class DeductionsController extends Controller
                 'monthly_saving' => 'required',
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $deductions->joining_fee =  $request->input('joining_fee');

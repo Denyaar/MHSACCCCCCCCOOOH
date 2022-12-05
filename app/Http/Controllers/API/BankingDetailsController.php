@@ -107,8 +107,9 @@ class BankingDetailsController extends  Controller
                 'acc_type' => 'required',
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $request['user_id']= Auth::user()->id;
@@ -229,8 +230,9 @@ class BankingDetailsController extends  Controller
                 'acc_type' => 'required',
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $bankingdetails->user_id =  Auth::user()->id;
@@ -280,8 +282,10 @@ class BankingDetailsController extends  Controller
         $banking_details = BankingDetails::findorfail($id)->WithoutTrashed();
 
         if($banking_details->status == 1){
-            return response(['status' => false, 'message' => 'Banking Details have been Approved Already!  ',
-                'data' =>$banking_details ]);
+
+            $response = (['status' => false, 'message' => 'Banking Details were Approved Already!!',
+                'data' => $banking_details]);
+            return  response($response,422);
         }
         else{
             $banking_details->status =1;

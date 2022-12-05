@@ -112,8 +112,9 @@ class LoansController extends  Controller
                 'repayment_period' => 'required'
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $request['applied_date']=  $request->input('applied_date');
@@ -236,8 +237,9 @@ class LoansController extends  Controller
                 'status' => 'required'
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $loans->loan_name =  $request->input('loan_name');
@@ -288,8 +290,9 @@ class LoansController extends  Controller
         $loan_approve = Loan::findorfail($id)->WithoutTrashed();
 
         if($loan_approve->status == 1){
-            return response(['status' => false, 'message' => 'Loan has been Approved Already!  ',
-                'data' =>$loan_approve ]);
+            $response = (['status' => false, 'message' => 'Loan has been Approved Already!',
+                'data' => $loan_approve]);
+            return  response($response,422);
         }
         else{
             $loan_approve->status =1;

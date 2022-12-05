@@ -110,8 +110,9 @@ class ApiUserDetails  extends  Controller
                 'address' => 'required|max:255'
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                 $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                 return  response($response,422);
             }
 
             $user_d = Auth::user()->id;
@@ -235,8 +236,9 @@ class ApiUserDetails  extends  Controller
                 'address' => 'required|max:255'
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $userDetails-> user_id =Auth::user()->id;
@@ -288,13 +290,15 @@ class ApiUserDetails  extends  Controller
         $approve_userDetails = UserDetails::findorfail($id)->WithoutTrashed();
 
         if($approve_userDetails->status == 1){
-            return response(['status' => false, 'message' => 'Loan has been Approved Already!  ',
-                'data' =>$approve_userDetails ]);
+            $response = (['status' => false, 'message' => 'Loan has been Approved Already!',
+                'data' => $approve_userDetails]);
+            return  response($response,422);
         }
         else{
             $approve_userDetails->status =1;
             $approve_userDetails->save();
-            return response(['status' => true, 'message' => 'Loan Approval Successfully ', 'data' => $approve_userDetails]);
+             $response=(['status' => true, 'message' => 'Loan Approval Successfully ', 'data' => $approve_userDetails]);
+             return  response($response,200);
         }
 
     }

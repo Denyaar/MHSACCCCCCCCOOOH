@@ -70,8 +70,11 @@ class ApiAuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response(['status' => false, 'message' => 'There were some problems with your input',
-                'data' => $validator->errors()]);
+            $response=['status' => false, 'message' => 'There were some problems with your input',
+                'data' => $validator->errors()];
+            return  response($response,422);
+
+
         }
 
         $name = generateUsername($request['first_name'], $request['last_name']);
