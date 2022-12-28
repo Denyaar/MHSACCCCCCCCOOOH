@@ -38,7 +38,7 @@ class NextOfKinController extends Controller
     {
         $nextofkin = NextOfKin::all();
 
-        $response = ['status' => true, 'message' => '', 'data' => [$nextofkin]];
+        $response = ['status' => true, 'message' => '', 'data' => $nextofkin];
         return response($response, 200);
 
     }
@@ -128,7 +128,7 @@ class NextOfKinController extends Controller
             $nextOfkin = NextOfKin::create($request->toArray());
             $nextOfkin->save();
 
-            $response = ['status' => true, 'message' => 'Data Saved Successfully', 'data' => [$nextOfkin]];
+            $response = ['status' => true, 'message' => 'Data Saved Successfully', 'data' => $nextOfkin];
             return response($response, 200);
         }
     }
@@ -252,7 +252,7 @@ class NextOfKinController extends Controller
             $nextOfKin->save();
 
             if ($nextOfKin->save()) {
-                $response = ['status' => true, 'message' => 'Next of Kin Details Updated Successfully', 'data' => [$nextOfKin]];
+                $response = ['status' => true, 'message' => 'Next of Kin Details Updated Successfully', 'data' => $nextOfKin];
                 return response($response, 200);
             }
 

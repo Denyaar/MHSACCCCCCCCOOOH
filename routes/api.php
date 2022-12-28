@@ -9,6 +9,7 @@ use App\Http\Controllers\API\DeductionsController;
 use App\Http\Controllers\API\EmploymentDetailsController;
 use App\Http\Controllers\API\LoansController;
 use App\Http\Controllers\API\NextOfKinController;
+use App\Http\Controllers\API\RequirementsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,9 +31,18 @@ Route::group(['api','middleware' => ['json.response']], function () {
         Route::post('/logAsadmin', [ApiAuthController::class, 'Adminlogin'])->name('login.admin');
         Route::post('/login', [ApiAuthController::class, 'login'])->name('login.api');
         Route::post('/register', [ApiAuthController::class, 'register'])->name('register.api');
+        Route::post('/forget_password', [ApiAuthController::class, 'forgetPassword'])->name('forget_password.api');
+        Route::post('/reset', [ApiAuthController::class, 'reset'])->name('reset.api');
 
 
-    Route::group(['middleware' => ['auth:api','json.response'] ], function () {
+        Route::get('/requirements', [RequirementsController::class, 'index']);
+        Route::post('/requirements', [RequirementsController::class, 'store']);
+        Route::get('/requirements/{id}', [RequirementsController::class, 'show']);
+        Route::delete('/requirements/{id}', [RequirementsController::class, 'destroy']);
+
+
+
+        Route::group(['middleware' => ['auth:api','json.response'] ], function () {
 
         Route::get('/nextofkin', [NextOfKinController::class, 'index']);
         Route::post('/nextofkin', [NextOfKinController::class, 'store']);
@@ -80,19 +90,6 @@ Route::group(['api','middleware' => ['json.response']], function () {
         Route::delete('/deductions/{id}', [DeductionsController::class, 'destroy']);
 
 
-
-//
-//    Route::resource('nextofkin', \App\Http\Controllers\API\NextOfKinController::class);
-//
-//    Route::resource('userdetails', \App\Http\Controllers\API\ApiUserDetails::class);
-//
-//    Route::resource('employmentdetails', \App\Http\Controllers\API\EmploymentDetailsController::class);
-//
-//    Route::resource('loan', \App\Http\Controllers\API\LoansController::class);
-//
-//    Route::resource('bankingdetails', \App\Http\Controllers\API\BankingDetailsController::class);
-//
-//    Route::resource('deductions', \App\Http\Controllers\API\DeductionsController::class);
 
 
     });
