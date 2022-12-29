@@ -156,8 +156,8 @@ class RequirementsController extends Controller
 
         $requirements = Requirements::create([
             'user_id'              => $request->input('user_id'),
-            'payslip'              => $id_name,
-            'copy_of_nat_id'       => $payslip_name,
+            'payslip'              => $payslip_name,
+            'copy_of_nat_id'       => $id_name,
             'bank_statement'       => $bank_statement_name,
         ]);
         $requirements->save();
