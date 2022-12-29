@@ -310,10 +310,10 @@ class ApiAuthController extends Controller
     }
 
     /**
-     * @OA\Post(
+     * @OA\Post (
      * path="/api/forget_password",
      * operationId="forget_password",
-     * tags={"Login"},
+     * tags={"Reset-Password"},
      * summary="User Forgot Password",
      * description="User Forgot Password",
      *     @OA\RequestBody(
@@ -356,26 +356,26 @@ class ApiAuthController extends Controller
             $request->only('email')
         );
 
-        return $status == Password::RESET_LINK_SENT
-            ? back()->with(['status' => __($status)])
-            : back()->withErrors(['email' => __($status)]);
+//        return $status == Password::RESET_LINK_SENT
+//            ? back()->with(['status' => __($status)])
+//            : back()->withErrors(['email' => __($status)]);
 
-//        if($status == Password::RESET_LINK_SENT){
-//            return[
-//                'status'=> __($status)
-//            ];
-//        }
-//
-//        throw ValidationException::withErrors([
-//            'email'=>[trans($status)]
-//        ]);
+        if($status == Password::RESET_LINK_SENT){
+            return[
+                'status'=> __($status)
+            ];
+        }
+
+        throw ValidationException::withErrors([
+            'email'=>[trans($status)]
+        ]);
     }
 
     /**
      * @OA\Post(
      * path="/api/reset",
      * operationId="reset_password",
-     * tags={"Login"},
+     * tags={"Reset-Password"},
      * summary="User Reset Password",
      * description="User Reset Password",
      *     @OA\RequestBody(
@@ -384,10 +384,11 @@ class ApiAuthController extends Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"email","password","token"},
+     *               required={"email","password","token","password_confirmation"},
      *               @OA\Property(property="token", type="text"),
      *               @OA\Property(property="email", type="email"),
      *               @OA\Property(property="password", type="password"),
+     *               @OA\Property(property="password_confirmation", type="password"),
      *            ),
      *        ),
      *    ),
@@ -423,7 +424,7 @@ class ApiAuthController extends Controller
             function ($user) use ($request){
               $user->forcefill([
                   'password'=>Hash::make($request->password),
-                  'rememberToken'=>str_random(64),
+                  'token'=>str_random(64),
               ])->save();
 
                 $user->tokens()->delete();

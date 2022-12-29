@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Company;
 use App\Models\Requirements;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,9 +13,26 @@ use Illuminate\Support\Facades\Validator;
 class RequirementsController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *      path="/api/requirements",
+     *      operationId="getRequirementslist",
+     *      tags={"Requirements"},
+     *      summary="Get list of Requirements",
+     *      description="Returns list Requirements",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
      */
     public function index()
     {
@@ -24,6 +40,8 @@ class RequirementsController extends Controller
             ->join('users','users.id','=','requirements.user_id')
             ->select('requirements.*','users.first_name','users.last_name','users.name')
             ->get();
+
+
         $response = ['status'=>true,'message'=>'','data' => $requirements];
         return response($response, 200);
 
@@ -40,18 +58,54 @@ class RequirementsController extends Controller
         //
     }
 
+
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @OA\Post(
+     * path="/api/requirements",
+     * operationId="userrequirementsstore",
+     * tags={"Requirements"},
+     * summary="Save User Requirements",
+     * description="Saving User  Requirements",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *            mediaType="multipart/form-data",
+     *            @OA\Schema(
+     *               type="object",
+     *               required={"user_id","copy_of_nat_id","payslip","bank_statement"},
+     *               @OA\Property(property="user_id", type="text"),
+     *               @OA\Property(property="copy_of_nat_id", type="file"),
+     *               @OA\Property(property="payslip", type="file"),
+     *               @OA\Property(property="bank_statement", type="file"),
+     *            ),
+     *        ),
+     *    ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="User Requirements Saved Successfully",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="User Requirements Saved Successfully",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=422,
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     * )
      */
+
     public function store(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
             [
-                'user_id'                  => 'required|unique:requirements',
+                'user_id'         => 'required|unique:requirements',
                 'copy_of_nat_id'  => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:4096|unique:requirements',
                 'payslip' => 'required|mimes:csv,txt,xlx,xls,pdf|max:2048|unique:requirements',
                 'bank_statement' => 'required|mimes:csv,txt,xlx,xls,pdf|max:2048|unique:requirements',
@@ -65,15 +119,14 @@ class RequirementsController extends Controller
             return  response($response,415);
         }
 
-        $idname = $request->file('copy_of_nat_id')->getClientOriginalName();
+        $id_name = $request->file('copy_of_nat_id')->getClientOriginalName();
         $payslip_name = $request->file('payslip')->getClientOriginalName();
         $bank_statement_name = $request->file('bank_statement')->getClientOriginalName();
 
-       // $input_files=[$request->file('copy_of_nat_id'),$request->file('payslip'),$request->file('bank_statement')];
 
         if ($request->file('copy_of_nat_id')->isValid()) {
             $idPhoto = $request->file('copy_of_nat_id');
-            Storage::disk('public')->put('user-ids/' . $idname, File::get($idPhoto));
+            Storage::disk('public')->put('user-ids/' . $id_name, File::get($idPhoto));
         } else {
             $response=['status' => false, 'message' => 'Invalid  photo',
                 'data' => $validator->errors()];
@@ -103,7 +156,7 @@ class RequirementsController extends Controller
 
         $requirements = Requirements::create([
             'user_id'              => $request->input('user_id'),
-            'payslip'              => $idname,
+            'payslip'              => $id_name,
             'copy_of_nat_id'       => $payslip_name,
             'bank_statement'       => $bank_statement_name,
         ]);
@@ -151,13 +204,45 @@ class RequirementsController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Requirements  $requirements
-     * @return \Illuminate\Http\Response
+     * @OA\Delete(
+     * path="/api/requirements/{id}",
+     * operationId="userrequirementsdelete",
+     * tags={"Requirements"},
+     * summary="Permanantly Delete User  Requirements",
+     * description="Deleting User  Requirements Permanantly",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Project id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=204,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Resource Not Found"
+     *      )
+     * )
      */
-    public function destroy(Requirements $requirements)
+    public function destroy($id)
     {
-        //
+        $requirements = Requirements::findOrFail($id);
+        $requirements->delete();
+
+        return  response(['status'=>true,'message'=>'User Documents Deleted Successfully', 'data'=>'']);
     }
 }

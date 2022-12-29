@@ -3,8 +3,6 @@
 use App\Http\Controllers\API\ApiAuthController;
 use App\Http\Controllers\API\ApiUserDetails;
 use App\Http\Controllers\API\BankingDetailsController;
-use App\Http\Controllers\API\BanksBranchesController;
-use App\Http\Controllers\API\BanksController;
 use App\Http\Controllers\API\DeductionsController;
 use App\Http\Controllers\API\EmploymentDetailsController;
 use App\Http\Controllers\API\LoansController;
@@ -31,15 +29,8 @@ Route::group(['api','middleware' => ['json.response']], function () {
         Route::post('/logAsadmin', [ApiAuthController::class, 'Adminlogin'])->name('login.admin');
         Route::post('/login', [ApiAuthController::class, 'login'])->name('login.api');
         Route::post('/register', [ApiAuthController::class, 'register'])->name('register.api');
-        Route::post('/forget_password', [ApiAuthController::class, 'forgetPassword'])->name('forget_password.api');
-        Route::post('/reset', [ApiAuthController::class, 'reset'])->name('reset.api');
-
-
-        Route::get('/requirements', [RequirementsController::class, 'index']);
-        Route::post('/requirements', [RequirementsController::class, 'store']);
-        Route::get('/requirements/{id}', [RequirementsController::class, 'show']);
-        Route::delete('/requirements/{id}', [RequirementsController::class, 'destroy']);
-
+        Route::post('/forget_password', [ApiAuthController::class, 'forgetPassword']);
+        Route::post('/reset', [ApiAuthController::class, 'reset'])->name('password.reset');
 
 
         Route::group(['middleware' => ['auth:api','json.response'] ], function () {
@@ -89,10 +80,14 @@ Route::group(['api','middleware' => ['json.response']], function () {
         Route::put('/deductions/{id}', [DeductionsController::class, 'update']);
         Route::delete('/deductions/{id}', [DeductionsController::class, 'destroy']);
 
+            Route::get('/requirements', [RequirementsController::class, 'index']);
+            Route::post('/requirements', [RequirementsController::class, 'store']);
+            Route::get('/requirements/{id}', [RequirementsController::class, 'show']);
+            Route::delete('/requirements/{id}', [RequirementsController::class, 'destroy']);
 
 
 
-    });
+        });
 
     });
 });
