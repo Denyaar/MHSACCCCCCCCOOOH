@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('amount');
             $table->boolean('status');
             $table->string('monthly_installments');
+            $table->string('loan_purpose');
             $table->string('repayment_period')->nullable();
             $table->dateTime('applied_date');
             $table->dateTime('approved_date');

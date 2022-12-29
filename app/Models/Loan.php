@@ -72,7 +72,7 @@ class Loan extends Model
         'loan_purpose'                        => 'string',
         'type'                               => 'string',
         'amount'                             => 'string',
-        'status'                             => 'string',
+        'status'                             => 'boolean',
         'applied_date'                       => 'datetime',
         'approved_date'                      => 'datetime',
         'monthly_installments'               => 'string',

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -15,6 +17,7 @@ class User extends Authenticatable
     use HasRoleAndPermission;
     use Notifiable;
     use SoftDeletes;
+    use canResetPassword;
 
     /**
      * The database table used by the model.
@@ -109,6 +112,11 @@ class User extends Authenticatable
     public function Loan()
     {
         return $this->belongsToMany(Loan::class, 'user_loan');
+    }
+
+    public function sendPasswordResetNotification($token){
+        $url = 'https://api.mhsacco.co.zw/api/reset?token=' .$token;
+        $this->notify(new ResetPassword($url));
     }
 
 }

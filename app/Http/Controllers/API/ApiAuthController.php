@@ -4,14 +4,17 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use jeremykenedy\LaravelRoles\Models\Role;
 use jeremykenedy\LaravelRoles\Traits\HasRoleAndPermission;
+use Nette\Schema\ValidationException;
 use OpenApi\Annotations as OA;
 
 class ApiAuthController extends Controller
@@ -70,8 +73,11 @@ class ApiAuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response(['status' => false, 'message' => 'There were some problems with your input',
-                'data' => $validator->errors()]);
+            $response=['status' => false, 'message' => 'There were some problems with your input',
+                'data' => $validator->errors()];
+            return  response($response,422);
+
+
         }
 
         $name = generateUsername($request['first_name'], $request['last_name']);
@@ -93,7 +99,7 @@ class ApiAuthController extends Controller
 
         $token = $user->createToken('MHSACCO Grant Client')->accessToken;
 
-        $response = ['status'=>true,'message'=>'Welcome '.$user->first_name,'token' => $token,'user' => [$user]];
+        $response = ['status'=>true,'message'=>'Welcome '.$user->first_name,'token' => $token,'data' => $user];
         return response($response, 200);
     }
 
@@ -159,11 +165,11 @@ class ApiAuthController extends Controller
                     return response($response, 422);
                 }
             } else {
-                $response = ["status"=>false,"message" =>'User does not exist','data'=>[]];
+                $response = ["status"=>false,"message" =>'User does not exist','data'=>''];
                 return response($response, 422);
             }
         }else {
-            $response = ["status"=>false,"message" =>'You are not Admin','data'=>[]];
+            $response = ["status"=>false,"message" =>'You are not Admin','data'=>''];
             return response($response, 403);
         }
 
@@ -222,14 +228,14 @@ class ApiAuthController extends Controller
         if ($user) {
             if (Hash::check($request->password, $user->password)) {
                 $token = $user->createToken('MHSACCO Password Grant Client')->accessToken;
-                $response = ["status"=>true,'user' => $user, 'token' => $token];
+                $response = ["status"=>true,'data' => $user, 'token' => $token];
                 return response($response, 200);
             } else {
                 $response = ["status"=>false,"message" => "Password mismatch"];
                 return response($response, 422);
             }
         } else {
-            $response = ["status"=>false,"message" =>'User does not exist','data'=>[]];
+            $response = ["status"=>false,"message" =>'User does not exist','data'=>''];
             return response($response, 422);
         }
     }
@@ -301,6 +307,141 @@ class ApiAuthController extends Controller
         $token->revoke();
         $response = ["status"=>true,'message' => 'You have been successfully logged out!', 'data'=>[]];
         return response($response, 200);
+    }
+
+    /**
+     * @OA\Post (
+     * path="/api/forget_password",
+     * operationId="forget_password",
+     * tags={"Reset-Password"},
+     * summary="User Forgot Password",
+     * description="User Forgot Password",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *            mediaType="multipart/form-data",
+     *            @OA\Schema(
+     *               type="object",
+     *               required={"email"},
+     *               @OA\Property(property="email", type="email"),
+     *            ),
+     *        ),
+     *    ),
+     *
+     *      @OA\Response(
+     *          response=201,
+     *          description="Reset Link Successfully Sent",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Reset Link Successfully Sent",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=422,
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     * )
+     */
+    public  function forgetPassword(Request $request){
+        $request->validate([
+            'email'=>'required|email'
+        ]);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+//        return $status == Password::RESET_LINK_SENT
+//            ? back()->with(['status' => __($status)])
+//            : back()->withErrors(['email' => __($status)]);
+
+        if($status == Password::RESET_LINK_SENT){
+            return[
+                'status'=> __($status)
+            ];
+        }
+
+        throw ValidationException::withErrors([
+            'email'=>[trans($status)]
+        ]);
+    }
+
+    /**
+     * @OA\Post(
+     * path="/api/reset",
+     * operationId="reset_password",
+     * tags={"Reset-Password"},
+     * summary="User Reset Password",
+     * description="User Reset Password",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *            mediaType="multipart/form-data",
+     *            @OA\Schema(
+     *               type="object",
+     *               required={"email","password","token","password_confirmation"},
+     *               @OA\Property(property="token", type="text"),
+     *               @OA\Property(property="email", type="email"),
+     *               @OA\Property(property="password", type="password"),
+     *               @OA\Property(property="password_confirmation", type="password"),
+     *            ),
+     *        ),
+     *    ),
+     *
+     *      @OA\Response(
+     *          response=201,
+     *          description="Reset Link Successfully Sent",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Reset Link Successfully Sent",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=422,
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     * )
+     */
+    public  function reset(Request $request){
+        $request->validate([
+            'token'=>'required',
+            'email'=>'required|email',
+            'password'=>'required','confirmed'
+        ]);
+
+        $status = Password::reset(
+          $request->only('email','password','password_confirmation','token'),
+            function ($user) use ($request){
+              $user->forcefill([
+                  'password'=>Hash::make($request->password),
+                  'token'=>str_random(64),
+              ])->save();
+
+                $user->tokens()->delete();
+
+              event(new PasswordReset($user));
+            }
+        );
+
+        if($status == Password::PASSWORD_RESET){
+
+            $response = ['status'=>true,'message'=>'Password Reset Successfully', 'data'=>''];
+            return response($response,200);
+        }
+
+        return  response([
+            'message'=>__($status)
+        ],500);
     }
 
     public function deleteMyAccount (Request $request) {

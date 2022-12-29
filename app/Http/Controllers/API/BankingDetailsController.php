@@ -36,7 +36,7 @@ class BankingDetailsController extends  Controller
     {
         $bankingdetails = BankingDetails::all();
 
-        $response = ['status'=>true,'message'=>'','user' => [$bankingdetails]];
+        $response = ['status'=>true,'message'=>'','data' => $bankingdetails];
         return response($response, 200);
 
     }
@@ -64,11 +64,12 @@ class BankingDetailsController extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"bank","bank_branch","branch_code","acc_name","acc_number","acc_type"},
+     *               required={"bank","bank_branch","branch_code","acc_name","acc_number","status","acc_type"},
      *               @OA\Property(property="bank", type="text"),
      *               @OA\Property(property="bank_branch", type="text"),
      *               @OA\Property(property="branch_code", type="text"),
      *               @OA\Property(property="acc_name", type="text"),
+     *               @OA\Property(property="status", type="text"),
      *               @OA\Property(property="acc_number", type="text"),
      *               @OA\Property(property="acc_type", type="text"),
      *
@@ -106,8 +107,9 @@ class BankingDetailsController extends  Controller
                 'acc_type' => 'required',
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $request['user_id']= Auth::user()->id;
@@ -115,26 +117,48 @@ class BankingDetailsController extends  Controller
             $request['bank_branch']=  $request->input('bank_branch');
             $request['branch_code']=  $request->input('branch_code');
             $request['acc_name']=  $request->input('acc_name');
+            $request['status']=0;
             $request['acc_number']=  $request->input('acc_number');
             $request['acc_type']=  $request->input('acc_type');
 
             $bankingdetails = BankingDetails::create($request->toArray());
             $bankingdetails->save();
 
-            $response = ['status'=>true,'message'=>'Banking Details Saved Successfully','data' => [$bankingdetails]];
+            $response = ['status'=>true,'message'=>'Banking Details Saved Successfully','data' => $bankingdetails];
             return response($response, 200);
         }
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\BankingDetails  $bankingdetails
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *      path="/api/bankingdetail/{id}",
+     *      operationId="getUserBankingDetails",
+     *      tags={"BankingDetails"},
+     *      summary="Employee Banking Details",
+     *      description="Returns Employee Banking Details",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
      */
+
     public function show($id)
     {
-        //
+        $bankingdetails = BankingDetails::findorfail($id);
+
+        $response = ['status'=>true,'message'=>'','data' => $bankingdetails];
+        return response($response, 200);
+
     }
 
     /**
@@ -162,11 +186,12 @@ class BankingDetailsController extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"bank","bank_branch","branch_code","acc_name","acc_number","acc_type"},
+     *               required={"bank","bank_branch","branch_code","acc_name","acc_number","acc_type","status"},
      *               @OA\Property(property="bank", type="text"),
      *               @OA\Property(property="bank_branch", type="text"),
      *               @OA\Property(property="branch_code", type="text"),
      *               @OA\Property(property="acc_name", type="text"),
+     *               @OA\Property(property="status", type="text"),
      *               @OA\Property(property="acc_number", type="text"),
      *               @OA\Property(property="acc_type", type="text"),
      *
@@ -205,8 +230,9 @@ class BankingDetailsController extends  Controller
                 'acc_type' => 'required',
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $bankingdetails->user_id =  Auth::user()->id;
@@ -214,17 +240,59 @@ class BankingDetailsController extends  Controller
             $bankingdetails->bank_branch =  $request->input('bank_branch');
             $bankingdetails->branch_code =  $request->input('branch_code');
             $bankingdetails->acc_name =  $request->input('acc_name');
+            $bankingdetails->status =  $request->input('status');
             $bankingdetails->acc_number =  $request->input('acc_number');
             $bankingdetails->acc_type =  $request->input('acc_type');
 
             $bankingdetails->save();
 
             if($bankingdetails->save()){
-                $response = ['status'=>true,'message'=>'Banking Details  Updated Successfully','data' => [$bankingdetails]];
+                $response = ['status'=>true,'message'=>'Banking Details  Updated Successfully','data' => $bankingdetails];
                 return response($response, 200);
             }
 
         }
+    }
+
+    /**
+     * @OA\Get(
+     *      path="/api/approve_bankingdetails/{id}",
+     *      operationId="approvebankingdetails",
+     *      tags={"BankingDetails"},
+     *      summary="Approve banking details",
+     *      description="Return Approved banking Details",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
+     */
+
+    public function Approve($id)
+    {
+        $banking_details = BankingDetails::findorfail($id)->WithoutTrashed();
+
+        if($banking_details->status == 1){
+
+            $response = (['status' => false, 'message' => 'Banking Details were Approved Already!!',
+                'data' => $banking_details]);
+            return  response($response,422);
+        }
+        else{
+            $banking_details->status =1;
+            $banking_details->save();
+            return response(['status' => true, 'message' => 'Banking Details Approval Successfully', 'data' => $banking_details]);
+        }
+
     }
 
     /**
@@ -267,7 +335,7 @@ class BankingDetailsController extends  Controller
         $bankingdetails = BankingDetails::findOrFail($id);
         $bankingdetails->delete();
 
-        return  response(['status'=>true,'message'=>'Banking  Details Deleted Successfully', 'data'=>[]]);
+        return  response(['status'=>true,'message'=>'Banking  Details Deleted Successfully', 'data'=>'']);
     }
 
 }

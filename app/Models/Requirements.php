@@ -4,9 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class BankingDetails extends Model
+class Requirements extends Model
 {
 
     use HasFactory;
@@ -15,7 +14,7 @@ class BankingDetails extends Model
      *
      * @var string
      */
-    protected $table = 'banking_details';
+    protected $table = 'requirements';
 
     /**
      * Indicates if the model should be timestamped.
@@ -50,14 +49,11 @@ class BankingDetails extends Model
      * @var array
      */
     protected $fillable = [
-        'bank',
         'user_id',
-        'bank_branch',
-        'branch_code',
-        'acc_name',
-        'status',
-        'acc_number',
-        'acc_type',
+        'payslip',
+        'copy_of_nat_id',
+        'bank_statement',
+
     ];
 
     /**
@@ -68,13 +64,9 @@ class BankingDetails extends Model
     protected $casts = [
         'id'                                    => 'integer',
         'user_id'                                    => 'integer',
-        'bank'                                   => 'string',
-        'bank_branch'                           => 'string',
-        'branch_code'                           => 'string',
-        'acc_name'                             => 'string',
-        'status'                             => 'boolean',
-        'acc_number'                          => 'string',
-        'acc_type'                            => 'string',
+        'payslip'                                    => 'string',
+        'copy_of_nat_id'                                    => 'string',
+        'bank_statement'                                    => 'string',
     ];
 
     public  function Users(){

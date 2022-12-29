@@ -38,7 +38,7 @@ class LoansController extends  Controller
         $nextofkin = Loan::withoutTrashed()
             ->whereNull('deleted_at')->get();
 
-        $response = ['status'=>true,'message'=>'','user' => [$nextofkin]];
+        $response = ['status'=>true,'message'=>'','data' => $nextofkin];
         return response($response, 200);
 
     }
@@ -112,8 +112,9 @@ class LoansController extends  Controller
                 'repayment_period' => 'required'
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $request['applied_date']=  $request->input('applied_date');
@@ -128,20 +129,39 @@ class LoansController extends  Controller
             $loans = Loan::create($request->toArray());
             $loans->save();
 
-            $response = ['status'=>true,'message'=>'Data Saved Successfully','data' => [$loans]];
+            $response = ['status'=>true,'message'=>'Data Saved Successfully','data' => $loans];
             return response($response, 200);
         }
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Loan  $loans
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *      path="/api/loan/{id}",
+     *      operationId="getSpecificloansList",
+     *      tags={"Loans"},
+     *      summary="Loan Details ",
+     *      description="Returns Loan Details ",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
      */
-    public function show(Loan $loans)
+    public function show($id)
     {
-        //
+        $loan = Loan::findorfail($id);
+
+        $response= ['status'=>true,'message'=>'Loan Details','data'=>$loan];
+        return response($response,200);
     }
 
     /**
@@ -217,8 +237,9 @@ class LoansController extends  Controller
                 'status' => 'required'
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $loans->loan_name =  $request->input('loan_name');
@@ -233,13 +254,53 @@ class LoansController extends  Controller
             $loans->save();
 
             if($loans->save()){
-                $response = ['status'=>true,'message'=>'Loan  Updated Successfully','data' => [$loans]];
+                $response = ['status'=>true,'message'=>'Loan  Updated Successfully','data' => $loans];
                 return response($response, 200);
             }
 
         }
     }
 
+
+    /**
+     * @OA\Get(
+     *      path="/api/loan_approve/{id}",
+     *      operationId="approveloan",
+     *      tags={"Loans"},
+     *      summary="Approve Loan",
+     *      description="Returns Approved loan Details",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
+     */
+
+    public function Approve($id)
+    {
+        $loan_approve = Loan::findorfail($id)->WithoutTrashed();
+
+        if($loan_approve->status == 1){
+            $response = (['status' => false, 'message' => 'Loan has been Approved Already!',
+                'data' => $loan_approve]);
+            return  response($response,422);
+        }
+        else{
+            $loan_approve->status =1;
+            $loan_approve->save();
+            return response(['status' => true, 'message' => 'Loan Approval Successfully ', 'data' => $loan_approve]);
+        }
+
+    }
     /**
      * @OA\Delete(
      * path="/api/loan/{id}",
@@ -280,7 +341,51 @@ class LoansController extends  Controller
         $loan = Loan::findOrFail($id);
         $loan->delete();
 
-        return  response(['status'=>true,'message'=>'Loan Details Deleted Successfully', 'data'=>[]]);
+        return  response(['status'=>true,'message'=>'Loan Deleted Successfully', 'data'=>'']);
+    }
+
+
+    /**
+     * @OA\Delete(
+     * path="/api/forcedeleteloan/{id}",
+     * operationId="loanspermDelete",
+     * tags={"Loans"},
+     * summary="Delete Loan  Details Permanantly",
+     * description="Permanantly Deleting Loan  details",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Project id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=204,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Resource Not Found"
+     *      )
+     * )
+     */
+    public function ForceDelete($id)
+    {
+        $loan = Loan::findOrFail($id);
+        $loan->forceDelete();
+
+        return  response(['status'=>true,'message'=>'Loan Permanently Deleted Successfully', 'data'=>'']);
     }
 
 }

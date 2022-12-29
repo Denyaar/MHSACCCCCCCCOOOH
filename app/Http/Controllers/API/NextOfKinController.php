@@ -38,7 +38,7 @@ class NextOfKinController extends Controller
     {
         $nextofkin = NextOfKin::all();
 
-        $response = ['status' => true, 'message' => '', 'user' => [$nextofkin]];
+        $response = ['status' => true, 'message' => '', 'data' => $nextofkin];
         return response($response, 200);
 
     }
@@ -111,8 +111,9 @@ class NextOfKinController extends Controller
                 'address' => 'required|max:255'
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $request['user_id'] = Auth::user()->id;
@@ -127,20 +128,40 @@ class NextOfKinController extends Controller
             $nextOfkin = NextOfKin::create($request->toArray());
             $nextOfkin->save();
 
-            $response = ['status' => true, 'message' => 'Data Saved Successfully', 'data' => [$nextOfkin]];
+            $response = ['status' => true, 'message' => 'Data Saved Successfully', 'data' => $nextOfkin];
             return response($response, 200);
         }
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param \App\Models\NextOfKin $nextOfKin
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *      path="/api/nextofkin/{id}",
+     *      operationId="getEmployeenextofkinList",
+     *      tags={"NextOfKin"},
+     *      summary="Get Employee Next of kin Details",
+     *      description="Returns Details of Next of kins",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
      */
-    public function show(NextOfKin $nextOfKin)
+    public function show($id)
     {
-        //
+        $nextOfKin = NextOfKin::findorfail($id);
+
+        $response=['status'=>true,'message'=>'Employee Next of Kin Details','data'=>$nextOfKin];
+
+        return response($response, 200);
     }
 
     /**
@@ -214,8 +235,9 @@ class NextOfKinController extends Controller
                 'address' => 'required|max:255'
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $nextOfKin->user_id = Auth::user()->id;
@@ -230,7 +252,7 @@ class NextOfKinController extends Controller
             $nextOfKin->save();
 
             if ($nextOfKin->save()) {
-                $response = ['status' => true, 'message' => 'Next of Kin Details Updated Successfully', 'data' => [$nextOfKin]];
+                $response = ['status' => true, 'message' => 'Next of Kin Details Updated Successfully', 'data' => $nextOfKin];
                 return response($response, 200);
             }
 

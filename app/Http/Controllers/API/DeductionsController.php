@@ -36,7 +36,7 @@ class DeductionsController extends Controller
     {
         $deductions = Deductions::all();
 
-        $response = ['status'=>true,'message'=>'','user' => [$deductions]];
+        $response = ['status'=>true,'message'=>'','data' => $deductions];
         return response($response, 200);
 
     }
@@ -102,8 +102,9 @@ class DeductionsController extends Controller
                 'monthly_saving' => 'required',
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
 
@@ -115,20 +116,39 @@ class DeductionsController extends Controller
             $deductions = Deductions::create($request->toArray());
             $deductions->save();
 
-            $response = ['status'=>true,'message'=>'Data Saved Successfully','data' => [$deductions]];
+            $response = ['status'=>true,'message'=>'Data Saved Successfully','data' => $deductions];
             return response($response, 200);
         }
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Deductions  $deductions
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *      path="/api/deductions/{id}",
+     *      operationId="getOneDeductionsList",
+     *      tags={"Deductions"},
+     *      summary="Get Deductions Details",
+     *      description="Returns  Deduction",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
      */
-    public function show(Deductions $deductions)
+    public function show($id)
     {
-        //
+        $deductions = Deductions::findorfail($id);
+
+        $r= ['status' => true,'message'=>'Deduction Details','data'=>$deductions];
+        return response($r,200);
     }
 
     /**
@@ -195,8 +215,9 @@ class DeductionsController extends Controller
                 'monthly_saving' => 'required',
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $deductions->joining_fee =  $request->input('joining_fee');
@@ -207,7 +228,7 @@ class DeductionsController extends Controller
             $deductions->save();
 
             if($deductions->save()){
-                $response = ['status'=>true,'message'=>'Deductions Details Updated Successfully','data' => [$deductions]];
+                $response = ['status'=>true,'message'=>'Deductions Details Updated Successfully','data' => $deductions];
                 return response($response, 200);
             }
 
@@ -254,7 +275,7 @@ class DeductionsController extends Controller
         $deductions = Deductions::findOrFail($id);
         $deductions->delete();
 
-        return  response(['status'=>true,'message'=>'Deductions Details Deleted Successfully', 'data'=>[]]);
+        return  response(['status'=>true,'message'=>'Deductions Details Deleted Successfully', 'data'=>'']);
     }
 
 }

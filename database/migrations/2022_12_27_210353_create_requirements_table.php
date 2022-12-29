@@ -13,19 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('banking_details', function (Blueprint $table) {
+        Schema::create('requirements', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('bank');
-            $table->string('bank_branch');
-            $table->string('branch_code');
-            $table->string('acc_name');
-            $table->boolean('status');
-            $table->string('acc_number');
-            $table->string('acc_type');
+            $table->string('payslip');
+            $table->string('copy_of_nat_id');
+            $table->string('bank_statement');
             $table->timestamps();
 
-           $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 
@@ -36,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('banking_details');
+        Schema::dropIfExists('requirements');
     }
 };

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('employer_phone');
             $table->string('position_at_work');
             $table->string('grade');
+            $table->boolean('status');
             $table->string('department');
             $table->string('employer_address');
             $table->date('date_of_employment');

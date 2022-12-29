@@ -37,7 +37,7 @@ class EmploymentDetailsController extends  Controller
     {
         $employmentDetails = EmploymentDetails::all();
 
-        $response = ['status' => true, 'message' => '', 'user' => [$employmentDetails]];
+        $response = ['status' => true, 'message' => '', 'data' => $employmentDetails];
         return response($response, 200);
 
     }
@@ -65,11 +65,12 @@ class EmploymentDetailsController extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"employer","employer_phone","department","grade","position_at_work","date_of_employment","employer_address"},
+     *               required={"employer","employer_phone","department","grade","status","position_at_work","date_of_employment","employer_address"},
      *               @OA\Property(property="employer", type="text"),
      *               @OA\Property(property="employer_phone", type="text"),
      *               @OA\Property(property="position_at_work", type="text"),
      *               @OA\Property(property="grade", type="text"),
+     *               @OA\Property(property="status", type="text"),
      *               @OA\Property(property="date_of_employment", type="date"),
      *               @OA\Property(property="employer_address", type="text"),
      *               @OA\Property(property="department", type="text"),
@@ -108,8 +109,9 @@ class EmploymentDetailsController extends  Controller
                 'employer_address' => 'required|max:255'
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $request['user_id'] = Auth::user()->id;
@@ -117,6 +119,7 @@ class EmploymentDetailsController extends  Controller
             $request['date_of_employment'] = $request->input('date_of_employment');
             $request['employer_phone'] = $request->input('employer_phone');
             $request['grade'] = $request->input('grade');
+            $request['status'] = 0;
             $request['employer_address'] = $request->input('employer_address');
             $request['department'] = $request->input('department');
             $request['employer'] = $request->input('employer');
@@ -124,20 +127,40 @@ class EmploymentDetailsController extends  Controller
             $employmentDetails = EmploymentDetails::create($request->toArray());
             $employmentDetails->save();
 
-            $response = ['status' => true, 'message' => 'Data Saved Successfully', 'data' => [$employmentDetails]];
+            $response = ['status' => true, 'message' => 'Data Saved Successfully', 'data' => $employmentDetails];
             return response($response, 200);
         }
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param \App\Models\EmploymentDetails $employmentDetails
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *      path="/api/employmentdetails/{id}",
+     *      operationId="getEmployeeEmploymentDetailsList",
+     *      tags={"EmploymentDetails"},
+     *      summary="Employee Employment Details",
+     *      description="Returns Employee Employment Details",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
      */
-    public function show(EmploymentDetails $employmentDetails)
+
+    public function show($id)
     {
-        //
+        $employmentDetails = EmploymentDetails::findorfail($id);
+
+        $response = ['status'=>true,'message'=>'','data' => $employmentDetails];
+        return response($response, 200);
     }
 
     /**
@@ -165,11 +188,12 @@ class EmploymentDetailsController extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"employer","department","employer_phone","grade","position_at_work","date_of_employment","employer_address"},
+     *               required={"employer","department","employer_phone","grade","status","position_at_work","date_of_employment","employer_address"},
      *               @OA\Property(property="employer", type="text"),
      *               @OA\Property(property="employer_phone", type="text"),
      *               @OA\Property(property="position_at_work", type="text"),
      *               @OA\Property(property="grade", type="text"),
+     *               @OA\Property(property="status", type="text"),
      *               @OA\Property(property="date_of_employment", type="date"),
      *               @OA\Property(property="employer_address", type="text"),
      *               @OA\Property(property="department", type="text"),
@@ -209,8 +233,9 @@ class EmploymentDetailsController extends  Controller
                 'employer_address' => 'required|max:255'
             ]);
             if ($validator->fails()) {
-                return response(['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
+                return  response($response,422);
             }
 
             $employmentDetails->user_id = Auth::user()->id;
@@ -219,17 +244,60 @@ class EmploymentDetailsController extends  Controller
             $employmentDetails->employer_phone = $request->input('employer_phone');
             $employmentDetails->department = $request->input('department');
             $employmentDetails->grade = $request->input('grade');
+            $employmentDetails->status = $request->input('status');
             $employmentDetails->position_at_work = $request->input('position_at_work');
             $employmentDetails->employer_address = $request->input('employer_address');
             $employmentDetails->save();
 
             if ($employmentDetails->save()) {
-                $response = ['status' => true, 'message' => 'User Details Details Updated Successfully', 'data' => [$employmentDetails]];
+                $response = ['status' => true, 'message' => 'User Details Details Updated Successfully', 'data' => $employmentDetails];
                 return response($response, 200);
             }
 
         }
     }
+
+
+    /**
+     * @OA\Get(
+     *      path="/api/approve_emplomentdetails/{id}",
+     *      operationId="approveEmploymentDetails",
+     *      tags={"EmploymentDetails"},
+     *      summary="Approve Employment Details",
+     *      description="Returns Approved Employment Details",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
+     */
+
+    public function Approve($id)
+    {
+        $employmentdetails = EmploymentDetails::findorfail($id)->WithoutTrashed();
+
+        if($employmentdetails->status == 1){
+            $response = (['status' => false, 'message' => 'Employment Details Were Approved Already!',
+                'data' => $employmentdetails]);
+            return  response($response,422);
+        }
+        else{
+            $employmentdetails->status =1;
+            $employmentdetails->save();
+            return response(['status' => true, 'message' => 'Employment Details Approved', 'data' => $employmentdetails]);
+        }
+
+    }
+
 
     /**
      * @OA\Delete(
@@ -272,6 +340,9 @@ class EmploymentDetailsController extends  Controller
         $employmentdetails->delete();
 
 
-        return response(['status' => true, 'message' => 'User Details Deleted Successfully', 'data' => []]);
+        return response(['status' => true, 'message' => 'User Details Deleted Successfully', 'data' => '']);
     }
+
+
+
 }

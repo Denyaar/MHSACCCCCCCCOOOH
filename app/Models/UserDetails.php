@@ -55,6 +55,7 @@ class UserDetails extends Model
         'tittle',
         'date_of_birth',
         'gender',
+        'status', //Active or Not
         'nat_id',
         'address',
         'source_of_income',
@@ -72,6 +73,7 @@ class UserDetails extends Model
         'tittle'                              => 'string',
         'date_of_birth'                        => 'date',
         'gender'                              => 'string',
+        'status'                              => 'boolean',
         'nat_id'                              => 'string',
         'address'                             => 'string',
         'source_of_income'                    => 'string',
