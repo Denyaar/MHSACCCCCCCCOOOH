@@ -102,13 +102,14 @@ class RequirementsController extends Controller
 
     public function store(Request $request)
     {
+
         $validator = Validator::make(
             $request->all(),
             [
                 'user_id'         => 'required|unique:requirements',
                 'copy_of_nat_id'  => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:4096|unique:requirements',
-                'payslip' => 'required|mimes:csv,txt,xlx,xls,pdf|max:2048|unique:requirements',
-                'bank_statement' => 'required|mimes:csv,txt,xlx,xls,pdf|max:2048|unique:requirements',
+                'payslip' => 'required|mimes:csv,txt,xlx,xls,pdf,jpeg,png,jpg,gif,svg|max:2048|unique:requirements',
+                'bank_statement' => 'required|mimes:csv,txt,xlx,xls,pdf,jpeg,png,jpg,gif,svg|max:2048|unique:requirements',
 
             ]
         );
