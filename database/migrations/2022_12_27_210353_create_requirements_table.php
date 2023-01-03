@@ -16,9 +16,9 @@ return new class extends Migration
         Schema::create('requirements', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('payslip');
-            $table->string('copy_of_nat_id');
-            $table->string('bank_statement');
+            $table->string('payslip')->nullable();
+            $table->string('copy_of_nat_id')->nullable();
+            $table->string('bank_statement')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
