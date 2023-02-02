@@ -66,15 +66,19 @@ class LoansController extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"loan_name","loan_purpose","monthly_installments","repayment_period","type","applied_date", "amount","approved_date","status"},
+     *               required={"user_id","loan_name","loan_purpose","basic_salary","net_salary","other_income","approved_installments","repayment_period","type","applied_date", "amount","approved_date","status"},
+     *               @OA\Property(property="user_id", type="text"),
      *               @OA\Property(property="loan_name", type="text"),
      *               @OA\Property(property="loan_purpose", type="text"),
      *               @OA\Property(property="type", type="text"),
      *               @OA\Property(property="applied_date", type="date"),
      *               @OA\Property(property="approved_date", type="date"),
      *               @OA\Property(property="amount", type="text"),
+     *               @OA\Property(property="basic_salary", type="text"),
+     *               @OA\Property(property="net_salary", type="text"),
+     *               @OA\Property(property="other_income", type="text"),
      *               @OA\Property(property="status", type="text"),
-     *               @OA\Property(property="monthly_installments", type="text"),
+     *               @OA\Property(property="approved_installments", type="text"),
      *               @OA\Property(property="repayment_period", type="text"),
      *            ),
      *        ),
@@ -102,11 +106,15 @@ class LoansController extends  Controller
     {
         {
             $validator = Validator::make($request->all(), [
-                'monthly_installments' => 'required',
+                'user_id' => 'required',
+                'approved_installments' => 'required',
                 'loan_name' => 'required',
                 'applied_date' => 'required|date',
                 'approved_date' => 'required|date',
                 'loan_purpose' => 'required',
+                'basic_salary' => 'required',
+                'net_salary' => 'required',
+                'other_income' => 'required',
                 'amount' => 'required',
                 'type' => 'required',
                 'repayment_period' => 'required'
@@ -117,13 +125,17 @@ class LoansController extends  Controller
                 return  response($response,422);
             }
 
+            $request['user_id']=  $request->input('user_id');
             $request['applied_date']=  $request->input('applied_date');
             $request['approved_date']=  $request->input('approved_date');
             $request['repayment_period']=  $request->input('repayment_period');
             $request['loan_purpose']=  $request->input('loan_purpose');
             $request['amount']=  $request->input('amount');
+            $request['basic_salary']=  $request->input('basic_salary');
+            $request['net_salary']=  $request->input('net_salary');
+            $request['other_income']=  $request->input('other_income');
             $request['status']= 0;
-            $request['monthly_installments']=  $request->input('monthly_installments');
+            $request['approved_installments']=  $request->input('approved_installments');
             $request['loan_name']=  $request->input('loan_name');
             $request['type']=  $request->input('type');
             $loans = Loan::create($request->toArray());
@@ -189,15 +201,19 @@ class LoansController extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"loan_name","monthly_installments","repayment_period","loan_purpose","type","applied_date","approved_date", "amount","status"},
+     *              required={"user_id","loan_name","loan_purpose","basic_salary","net_salary","other_income","approved_installments","repayment_period","type","applied_date", "amount","approved_date","status"},
      *               @OA\Property(property="loan_name", type="text"),
+     *               @OA\Property(property="user_id", type="text"),
      *               @OA\Property(property="loan_purpose", type="text"),
      *               @OA\Property(property="type", type="text"),
      *               @OA\Property(property="applied_date", type="date"),
      *               @OA\Property(property="approved_date", type="date"),
      *               @OA\Property(property="amount", type="text"),
+     *               @OA\Property(property="basic_salary", type="text"),
+     *               @OA\Property(property="net_salary", type="text"),
+     *               @OA\Property(property="other_income", type="text"),
      *               @OA\Property(property="status", type="text"),
-     *               @OA\Property(property="monthly_installments", type="text"),
+     *               @OA\Property(property="approved_installments", type="text"),
      *               @OA\Property(property="repayment_period", type="text"),
      *            ),
      *        ),
@@ -226,15 +242,18 @@ class LoansController extends  Controller
         $loans = Loan::findOrFail($id);
         {
             $validator = Validator::make($request->all(), [
+                'approved_installments' => 'required',
+                'user_id' => 'required',
                 'loan_name' => 'required',
                 'applied_date' => 'required|date',
                 'approved_date' => 'required|date',
                 'loan_purpose' => 'required',
+                'basic_salary' => 'required',
+                'net_salary' => 'required',
+                'other_income' => 'required',
                 'amount' => 'required',
-                'monthly_installments' => 'required',
                 'type' => 'required',
-                'repayment_period' => 'required',
-                'status' => 'required'
+                'repayment_period' => 'required'
             ]);
             if ($validator->fails()) {
                 $response = (['status' => false, 'message' => 'There were some problems with your input',
@@ -242,12 +261,16 @@ class LoansController extends  Controller
                 return  response($response,422);
             }
 
+            $loans->user_id =  $request->input('user_id');
             $loans->loan_name =  $request->input('loan_name');
             $loans->applied_date =  $request->input('applied_date');
             $loans->approved_date =  $request->input('approved_date');
             $loans->loan_purpose =  $request->input('loan_purpose');
             $loans->amount =  $request->input('amount');
-            $loans->monthly_installments =  $request->input('monthly_installments');
+            $loans->basic_salary =  $request->input('basic_salary');
+            $loans->net_salary =  $request->input('net_salary');
+            $loans->other_income =  $request->input('other_income');
+            $loans->approved_installments =  $request->input('approved_installments');
             $loans->repayment_period =  $request->input('repayment_period');
             $loans->type =  $request->input('type');
             $loans->status =  $request->input('status');
