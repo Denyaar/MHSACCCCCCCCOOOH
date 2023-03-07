@@ -66,13 +66,13 @@ class ApiUserDetails  extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"tittle","mobile","source_of_income","nat_id","date_of_birth", "gender","status","address"},
+     *               required={"tittle","mobile","source_of_income","nat_id","date_of_birth", "gender","user_status","address"},
      *               @OA\Property(property="tittle", type="text"),
      *               @OA\Property(property="mobile", type="text"),
      *               @OA\Property(property="nat_id", type="text"),
      *               @OA\Property(property="date_of_birth", type="date"),
      *               @OA\Property(property="gender", type="text"),
-     *               @OA\Property(property="status", type="text"),
+     *               @OA\Property(property="user_status", type="text"),
      *               @OA\Property(property="address", type="text"),
      *               @OA\Property(property="source_of_income", type="text"),
      *            ),
@@ -121,7 +121,7 @@ class ApiUserDetails  extends  Controller
             $request['date_of_birth']=  $request->input('date_of_birth');
             $request['mobile']=  $request->input('mobile');
             $request['gender']=  $request->input('gender');
-            $request['status']=0;
+            $request['user_status']=0;
             $request['address']=  $request->input('address');
             $request['source_of_income']=  $request->input('source_of_income');
             $request['tittle']=  $request->input('tittle');
@@ -191,13 +191,13 @@ class ApiUserDetails  extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"tittle","source_of_income","mobile","nat_id","date_of_birth","status","gender","address"},
+     *               required={"tittle","source_of_income","mobile","nat_id","date_of_birth","user_status","gender","address"},
      *               @OA\Property(property="tittle", type="text"),
      *               @OA\Property(property="mobile", type="text"),
      *               @OA\Property(property="nat_id", type="text"),
      *               @OA\Property(property="date_of_birth", type="date"),
      *               @OA\Property(property="gender", type="text"),
-     *               @OA\Property(property="status", type="text"),
+     *               @OA\Property(property="user_status", type="text"),
      *               @OA\Property(property="address", type="text"),
      *               @OA\Property(property="source_of_income", type="text"),
      *            ),
@@ -246,7 +246,7 @@ class ApiUserDetails  extends  Controller
             $userDetails->date_of_birth =  $request->input('date_of_birth');
             $userDetails->mobile =  $request->input('mobile');
             $userDetails->gender =  $request->input('gender');
-            $userDetails->status =  $request->input('status');
+            $userDetails->user_status =  $request->input('user_status');
             $userDetails->source_of_income =  $request->input('source_of_income');
             $userDetails->nat_id =  $request->input('nat_id');
             $userDetails->address =  $request->input('address');
@@ -289,13 +289,13 @@ class ApiUserDetails  extends  Controller
     {
         $approve_userDetails = UserDetails::findorfail($id)->WithoutTrashed();
 
-        if($approve_userDetails->status == 1){
+        if($approve_userDetails->user_status == 1){
             $response = (['status' => false, 'message' => 'Loan has been Approved Already!',
                 'data' => $approve_userDetails]);
             return  response($response,422);
         }
         else{
-            $approve_userDetails->status =1;
+            $approve_userDetails->user_status =1;
             $approve_userDetails->save();
              $response=(['status' => true, 'message' => 'Loan Approval Successfully ', 'data' => $approve_userDetails]);
              return  response($response,200);

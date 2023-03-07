@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('nat_id')->unique();
             $table->string('mobile')->unique();
             $table->string('gender');
-            $table->boolean('status');
+            $table->boolean('user_status');
             $table->date('date_of_birth');
             $table->string('address');
             $table->string('source_of_income');

@@ -16,14 +16,14 @@ return new class extends Migration
         Schema::create('next_of_kin', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('name');
-            $table->string('surname');
-            $table->string('mobile_num')->unique();
-            $table->string('gender');
-            $table->string('nat_id')->unique();
-            $table->date('date_of_birth');
+            $table->string('next_of_kin_name');
+            $table->string('next_of_kin_surname');
+            $table->string('next_of_kin_mobile_num')->unique();
+            $table->string('next_of_kin_gender');
+            $table->string('next_of_kin_nat_id')->unique();
+            $table->date('next_of_kin_date_of_birth');
             $table->string('relationship');
-            $table->string('address');
+            $table->string('next_of_kin_address');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

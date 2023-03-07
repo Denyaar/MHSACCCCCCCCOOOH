@@ -65,12 +65,12 @@ class EmploymentDetailsController extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"employer","employer_phone","department","grade","status","position_at_work","date_of_employment","employer_address"},
+     *               required={"employer","employer_phone","department","grade","approved_status","position_at_work","date_of_employment","employer_address"},
      *               @OA\Property(property="employer", type="text"),
      *               @OA\Property(property="employer_phone", type="text"),
      *               @OA\Property(property="position_at_work", type="text"),
      *               @OA\Property(property="grade", type="text"),
-     *               @OA\Property(property="status", type="text"),
+     *               @OA\Property(property="approved_status", type="text"),
      *               @OA\Property(property="date_of_employment", type="date"),
      *               @OA\Property(property="employer_address", type="text"),
      *               @OA\Property(property="department", type="text"),
@@ -119,7 +119,7 @@ class EmploymentDetailsController extends  Controller
             $request['date_of_employment'] = $request->input('date_of_employment');
             $request['employer_phone'] = $request->input('employer_phone');
             $request['grade'] = $request->input('grade');
-            $request['status'] = 0;
+            $request['approved_status'] = 0;
             $request['employer_address'] = $request->input('employer_address');
             $request['department'] = $request->input('department');
             $request['employer'] = $request->input('employer');
@@ -188,12 +188,12 @@ class EmploymentDetailsController extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"employer","department","employer_phone","grade","status","position_at_work","date_of_employment","employer_address"},
+     *               required={"employer","department","employer_phone","grade","approved_status","position_at_work","date_of_employment","employer_address"},
      *               @OA\Property(property="employer", type="text"),
      *               @OA\Property(property="employer_phone", type="text"),
      *               @OA\Property(property="position_at_work", type="text"),
      *               @OA\Property(property="grade", type="text"),
-     *               @OA\Property(property="status", type="text"),
+     *               @OA\Property(property="approved_status", type="text"),
      *               @OA\Property(property="date_of_employment", type="date"),
      *               @OA\Property(property="employer_address", type="text"),
      *               @OA\Property(property="department", type="text"),
@@ -244,7 +244,7 @@ class EmploymentDetailsController extends  Controller
             $employmentDetails->employer_phone = $request->input('employer_phone');
             $employmentDetails->department = $request->input('department');
             $employmentDetails->grade = $request->input('grade');
-            $employmentDetails->status = $request->input('status');
+            $employmentDetails->approved_status = $request->input('approved_status');
             $employmentDetails->position_at_work = $request->input('position_at_work');
             $employmentDetails->employer_address = $request->input('employer_address');
             $employmentDetails->save();
@@ -285,13 +285,13 @@ class EmploymentDetailsController extends  Controller
     {
         $employmentdetails = EmploymentDetails::findorfail($id)->WithoutTrashed();
 
-        if($employmentdetails->status == 1){
+        if($employmentdetails->approved_status == 1){
             $response = (['status' => false, 'message' => 'Employment Details Were Approved Already!',
                 'data' => $employmentdetails]);
             return  response($response,422);
         }
         else{
-            $employmentdetails->status =1;
+            $employmentdetails->approved_status =1;
             $employmentdetails->save();
             return response(['status' => true, 'message' => 'Employment Details Approved', 'data' => $employmentdetails]);
         }

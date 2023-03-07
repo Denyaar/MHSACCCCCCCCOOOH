@@ -64,12 +64,12 @@ class BankingDetailsController extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"bank","bank_branch","branch_code","acc_name","acc_number","status","acc_type"},
+     *               required={"bank","bank_branch","branch_code","acc_name","acc_number","bank_status","acc_type"},
      *               @OA\Property(property="bank", type="text"),
      *               @OA\Property(property="bank_branch", type="text"),
      *               @OA\Property(property="branch_code", type="text"),
      *               @OA\Property(property="acc_name", type="text"),
-     *               @OA\Property(property="status", type="text"),
+     *               @OA\Property(property="bank_status", type="text"),
      *               @OA\Property(property="acc_number", type="text"),
      *               @OA\Property(property="acc_type", type="text"),
      *
@@ -117,7 +117,7 @@ class BankingDetailsController extends  Controller
             $request['bank_branch']=  $request->input('bank_branch');
             $request['branch_code']=  $request->input('branch_code');
             $request['acc_name']=  $request->input('acc_name');
-            $request['status']=0;
+            $request['bank_status']=0;
             $request['acc_number']=  $request->input('acc_number');
             $request['acc_type']=  $request->input('acc_type');
 
@@ -186,12 +186,12 @@ class BankingDetailsController extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"bank","bank_branch","branch_code","acc_name","acc_number","acc_type","status"},
+     *               required={"bank","bank_branch","branch_code","acc_name","acc_number","acc_type","bank_status"},
      *               @OA\Property(property="bank", type="text"),
      *               @OA\Property(property="bank_branch", type="text"),
      *               @OA\Property(property="branch_code", type="text"),
      *               @OA\Property(property="acc_name", type="text"),
-     *               @OA\Property(property="status", type="text"),
+     *               @OA\Property(property="bank_status", type="text"),
      *               @OA\Property(property="acc_number", type="text"),
      *               @OA\Property(property="acc_type", type="text"),
      *
@@ -240,7 +240,7 @@ class BankingDetailsController extends  Controller
             $bankingdetails->bank_branch =  $request->input('bank_branch');
             $bankingdetails->branch_code =  $request->input('branch_code');
             $bankingdetails->acc_name =  $request->input('acc_name');
-            $bankingdetails->status =  $request->input('status');
+            $bankingdetails->bank_status =  $request->input('bank_status');
             $bankingdetails->acc_number =  $request->input('acc_number');
             $bankingdetails->acc_type =  $request->input('acc_type');
 
@@ -281,14 +281,14 @@ class BankingDetailsController extends  Controller
     {
         $banking_details = BankingDetails::findorfail($id)->WithoutTrashed();
 
-        if($banking_details->status == 1){
+        if($banking_details->bank_status == 1){
 
             $response = (['status' => false, 'message' => 'Banking Details were Approved Already!!',
                 'data' => $banking_details]);
             return  response($response,422);
         }
         else{
-            $banking_details->status =1;
+            $banking_details->bank_status =1;
             $banking_details->save();
             return response(['status' => true, 'message' => 'Banking Details Approval Successfully', 'data' => $banking_details]);
         }
