@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\BankingDetails;
 use App\Models\UserDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -66,15 +67,22 @@ class ApiUserDetails  extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"tittle","mobile","source_of_income","nat_id","date_of_birth", "gender","user_status","address"},
+     *               required={"tittle","mobile","source_of_income","nat_id","date_of_birth","gender","address","bank","bank_branch","branch_code","acc_name","acc_number","bank_status","acc_type"},
      *               @OA\Property(property="tittle", type="text"),
      *               @OA\Property(property="mobile", type="text"),
      *               @OA\Property(property="nat_id", type="text"),
      *               @OA\Property(property="date_of_birth", type="date"),
      *               @OA\Property(property="gender", type="text"),
-     *               @OA\Property(property="user_status", type="text"),
      *               @OA\Property(property="address", type="text"),
      *               @OA\Property(property="source_of_income", type="text"),
+     *
+     *               @OA\Property(property="bank", type="text"),
+     *               @OA\Property(property="bank_branch", type="text"),
+     *               @OA\Property(property="branch_code", type="text"),
+     *               @OA\Property(property="acc_name", type="text"),
+     *               @OA\Property(property="acc_number", type="text"),
+     *               @OA\Property(property="acc_type", type="text"),
+     *
      *            ),
      *        ),
      *    ),
@@ -107,7 +115,14 @@ class ApiUserDetails  extends  Controller
                 'mobile' => 'required|unique:user_details',
                 'gender' => 'required',
                 'nat_id' => 'required|unique:user_details',
-                'address' => 'required|max:255'
+                'address' => 'required|max:255',
+
+                'bank' => 'required',
+                'bank_branch' => 'required',
+                'branch_code' => 'required',
+                'acc_name' => 'required|unique:banking_details',
+                'acc_number' => 'required|unique:banking_details',
+                'acc_type' => 'required',
             ]);
             if ($validator->fails()) {
                  $response = (['status' => false, 'message' => 'There were some problems with your input',
@@ -115,9 +130,9 @@ class ApiUserDetails  extends  Controller
                  return  response($response,422);
             }
 
-            $user_d = Auth::user()->id;
+            $user_id = Auth::user()->id;
 
-            $request['user_id']=$user_d;
+            $request['user_id']=$user_id;
             $request['date_of_birth']=  $request->input('date_of_birth');
             $request['mobile']=  $request->input('mobile');
             $request['gender']=  $request->input('gender');
@@ -128,6 +143,20 @@ class ApiUserDetails  extends  Controller
             $request['nat_id']=  $request->input('nat_id');
             $userDetails = UserDetails::create($request->toArray());
             $userDetails->save();
+
+            if($userDetails->save){
+                $request['user_id']= $user_id;
+                $request['bank']=  $request->input('bank');
+                $request['bank_branch']=  $request->input('bank_branch');
+                $request['branch_code']=  $request->input('branch_code');
+                $request['acc_name']=  $request->input('acc_name');
+                $request['bank_status']=0;
+                $request['acc_number']=  $request->input('acc_number');
+                $request['acc_type']=  $request->input('acc_type');
+
+                $bankingdetails = BankingDetails::create($request->toArray());
+                $bankingdetails->save();
+            }
 
             $response = ['status'=>true,'message'=>'Data Saved Successfully','data' => $userDetails];
             return response($response, 200);
