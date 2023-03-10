@@ -51,83 +51,83 @@ class BankingDetailsController extends  Controller
 
     }
 
-    /**
-     * @OA\Post(
-     * path="/api/bankingdetails",
-     * operationId="BankingdetailsCreate",
-     * tags={"BankingDetails"},
-     * summary="Save bank Details",
-     * description="Saving Banking details",
-     *     @OA\RequestBody(
-     *         @OA\JsonContent(),
-     *         @OA\MediaType(
-     *            mediaType="multipart/form-data",
-     *            @OA\Schema(
-     *               type="object",
-     *               required={"bank","bank_branch","branch_code","acc_name","acc_number","bank_status","acc_type"},
-     *               @OA\Property(property="bank", type="text"),
-     *               @OA\Property(property="bank_branch", type="text"),
-     *               @OA\Property(property="branch_code", type="text"),
-     *               @OA\Property(property="acc_name", type="text"),
-     *               @OA\Property(property="bank_status", type="text"),
-     *               @OA\Property(property="acc_number", type="text"),
-     *               @OA\Property(property="acc_type", type="text"),
-     *
-     *            ),
-     *        ),
-     *    ),
-     *      @OA\Response(
-     *          response=201,
-     *          description="Banking Details Saved Successfully",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Banking Details Saved Successfully",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(
-     *          response=422,
-     *          description="Unprocessable Entity",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(response=400, description="Bad request"),
-     *      @OA\Response(response=404, description="Resource Not Found"),
-     * )
-     */
-    public function store(Request $request)
-    {
-        {
-            $validator = Validator::make($request->all(), [
-                'bank' => 'required',
-                'bank_branch' => 'required',
-                'branch_code' => 'required',
-                'acc_name' => 'required|unique:banking_details',
-                'acc_number' => 'required|unique:banking_details',
-                'acc_type' => 'required',
-            ]);
-            if ($validator->fails()) {
-                $response = (['status' => false, 'message' => 'There were some problems with your input',
-                    'data' => $validator->errors()]);
-                return  response($response,422);
-            }
+    // /**
+    //  * @OA\Post(
+    //  * path="/api/bankingdetails",
+    //  * operationId="BankingdetailsCreate",
+    //  * tags={"BankingDetails"},
+    //  * summary="Save bank Details",
+    //  * description="Saving Banking details",
+    //  *     @OA\RequestBody(
+    //  *         @OA\JsonContent(),
+    //  *         @OA\MediaType(
+    //  *            mediaType="multipart/form-data",
+    //  *            @OA\Schema(
+    //  *               type="object",
+    //  *               required={"bank","bank_branch","branch_code","acc_name","acc_number","bank_status","acc_type"},
+    //  *               @OA\Property(property="bank", type="text"),
+    //  *               @OA\Property(property="bank_branch", type="text"),
+    //  *               @OA\Property(property="branch_code", type="text"),
+    //  *               @OA\Property(property="acc_name", type="text"),
+    //  *               @OA\Property(property="bank_status", type="text"),
+    //  *               @OA\Property(property="acc_number", type="text"),
+    //  *               @OA\Property(property="acc_type", type="text"),
+    //  *
+    //  *            ),
+    //  *        ),
+    //  *    ),
+    //  *      @OA\Response(
+    //  *          response=201,
+    //  *          description="Banking Details Saved Successfully",
+    //  *          @OA\JsonContent()
+    //  *       ),
+    //  *      @OA\Response(
+    //  *          response=200,
+    //  *          description="Banking Details Saved Successfully",
+    //  *          @OA\JsonContent()
+    //  *       ),
+    //  *      @OA\Response(
+    //  *          response=422,
+    //  *          description="Unprocessable Entity",
+    //  *          @OA\JsonContent()
+    //  *       ),
+    //  *      @OA\Response(response=400, description="Bad request"),
+    //  *      @OA\Response(response=404, description="Resource Not Found"),
+    //  * )
+    //  */
+    // public function store(Request $request)
+    // {
+    //     {
+    //         $validator = Validator::make($request->all(), [
+    //             'bank' => 'required',
+    //             'bank_branch' => 'required',
+    //             'branch_code' => 'required',
+    //             'acc_name' => 'required|unique:banking_details',
+    //             'acc_number' => 'required|unique:banking_details',
+    //             'acc_type' => 'required',
+    //         ]);
+    //         if ($validator->fails()) {
+    //             $response = (['status' => false, 'message' => 'There were some problems with your input',
+    //                 'data' => $validator->errors()]);
+    //             return  response($response,422);
+    //         }
 
-            $request['user_id']= Auth::user()->id;
-            $request['bank']=  $request->input('bank');
-            $request['bank_branch']=  $request->input('bank_branch');
-            $request['branch_code']=  $request->input('branch_code');
-            $request['acc_name']=  $request->input('acc_name');
-            $request['bank_status']=0;
-            $request['acc_number']=  $request->input('acc_number');
-            $request['acc_type']=  $request->input('acc_type');
+    //         $request['user_id']= Auth::user()->id;
+    //         $request['bank']=  $request->input('bank');
+    //         $request['bank_branch']=  $request->input('bank_branch');
+    //         $request['branch_code']=  $request->input('branch_code');
+    //         $request['acc_name']=  $request->input('acc_name');
+    //         $request['bank_status']=0;
+    //         $request['acc_number']=  $request->input('acc_number');
+    //         $request['acc_type']=  $request->input('acc_type');
 
-            $bankingdetails = BankingDetails::create($request->toArray());
-            $bankingdetails->save();
+    //         $bankingdetails = BankingDetails::create($request->toArray());
+    //         $bankingdetails->save();
 
-            $response = ['status'=>true,'message'=>'Banking Details Saved Successfully','data' => $bankingdetails];
-            return response($response, 200);
-        }
-    }
+    //         $response = ['status'=>true,'message'=>'Banking Details Saved Successfully','data' => $bankingdetails];
+    //         return response($response, 200);
+    //     }
+    // }
 
     /**
      * @OA\Get(

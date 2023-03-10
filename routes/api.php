@@ -35,7 +35,7 @@ Route::group(['api','middleware' => ['json.response']], function () {
         Route::group(['middleware' => ['auth:api','json.response'] ], function () {
 
             Route::get('/nextofkin', [NextOfKinController::class, 'index']);
-            Route::post('/nextofkin', [NextOfKinController::class, 'store']);
+           // Route::post('/nextofkin', [NextOfKinController::class, 'store']);
             Route::put('/nextofkin/{id}', [NextOfKinController::class, 'update']);
             Route::get('/nextofkin/{id}', [NextOfKinController::class, 'show']);
             Route::delete('/nextofkin/{id}', [NextOfKinController::class, 'destroy']);
@@ -50,7 +50,7 @@ Route::group(['api','middleware' => ['json.response']], function () {
             Route::delete('/forcedeleteuserdetails/{id}', [ApiUserDetails::class, 'ForceDelete']);
 
             Route::get('/employmentdetails', [EmploymentDetailsController::class, 'index']);
-            Route::post('/employmentdetails', [EmploymentDetailsController::class, 'store']);
+            //Route::post('/employmentdetails', [EmploymentDetailsController::class, 'store']);
             Route::put('/employmentdetails/{id}', [EmploymentDetailsController::class, 'update']);
             Route::get('/approve_emplomentdetails/{id}', [EmploymentDetailsController::class, 'show']);
             Route::get('/appempdetails/{id}', [EmploymentDetailsController::class, 'Approve']);
@@ -66,7 +66,7 @@ Route::group(['api','middleware' => ['json.response']], function () {
             Route::delete('/forcedeleteloan/{id}', [LoansController::class, 'ForceDelete']);
 
             Route::get('/bankingdetails', [BankingDetailsController::class, 'index']);
-            Route::post('/bankingdetails', [BankingDetailsController::class, 'store']);
+           // Route::post('/bankingdetails', [BankingDetailsController::class, 'store']);
             Route::put('/bankingdetails/{id}', [BankingDetailsController::class, 'update']);
             Route::get('/bankingdetails/{id}', [BankingDetailsController::class, 'show']);
             Route::get('/approve_bankingdetails/{id}', [BankingDetailsController::class, 'Approve']);

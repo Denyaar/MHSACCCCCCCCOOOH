@@ -53,85 +53,85 @@ class NextOfKinController extends Controller
 
     }
 
-    /**
-     * @OA\Post(
-     * path="/api/nextofkin",
-     * operationId="NextOfKinCreate",
-     * tags={"NextOfKin"},
-     * summary="Save Next of Kin Details",
-     * description="Saving next of kin details",
-     *     @OA\RequestBody(
-     *         @OA\JsonContent(),
-     *         @OA\MediaType(
-     *            mediaType="multipart/form-data",
-     *            @OA\Schema(
-     *               type="object",
-     *               required={"next_of_kin_name","next_of_kin_surname","next_of_kin_mobile_num","next_of_kin_nat_id","next_of_kin_date_of_birth", "next_of_kin_gender", "relationship","next_of_kin_address"},
-     *               @OA\Property(property="next_of_kin_name", type="text"),
-     *               @OA\Property(property="next_of_kin_surname", type="text"),
-     *               @OA\Property(property="next_of_kin_mobile_num", type="text"),
-     *               @OA\Property(property="next_of_kin_nat_id", type="text"),
-     *               @OA\Property(property="next_of_kin_date_of_birth", type="date"),
-     *               @OA\Property(property="next_of_kin_gender", type="text"),
-     *               @OA\Property(property="relationship", type="text"),
-     *               @OA\Property(property="next_of_kin_address", type="text"),
-     *            ),
-     *        ),
-     *    ),
-     *      @OA\Response(
-     *          response=201,
-     *          description="Next Of Kin Saved Successfully",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Next Of Kin Saved Successfully",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(
-     *          response=422,
-     *          description="Unprocessable Entity",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(response=400, description="Bad request"),
-     *      @OA\Response(response=404, description="Resource Not Found"),
-     * )
-     */
-    public function store(Request $request)
-    {
-        {
-            $validator = Validator::make($request->all(), [
-                'next_of_kin_name' => 'required|string|max:255',
-                'next_of_kin_surname' => 'required|string|max:255',
-                'next_of_kin_date_of_birth' => 'required|date',
-                'next_of_kin_mobile_num' => 'required|unique:next_of_kin',
-                'next_of_kin_gender' => 'required',
-                'relationship' => 'required',
-                'next_of_kin_nat_id' => 'required|unique:next_of_kin',
-                'next_of_kin_address' => 'required|max:255'
-            ]);
-            if ($validator->fails()) {
-                $response = (['status' => false, 'message' => 'There were some problems with your input',
-                    'data' => $validator->errors()]);
-                return  response($response,422);
-            }
-
-            $request['user_id'] = Auth::user()->id;
-            $request['next_of_kin_name'] = $request->input('next_of_kin_name');
-            $request['next_of_kin_surname'] = $request->input('next_of_kin_surname');
-            $request['next_of_kin_date_of_birth'] = $request->input('next_of_kin_date_of_birth');
-            $request['next_of_kin_mobile_num'] = $request->input('next_of_kin_mobile_num');
-            $request['next_of_kin_gender'] = $request->input('next_of_kin_gender');
-            $request['relationship'] = $request->input('relationship');
-            $request['next_of_kin_nat_id'] = $request->input('next_of_kin_nat_id');
-            $request['next_of_kin_address'] = $request->input('next_of_kin_address');
-            $nextOfkin = NextOfKin::create($request->toArray());
-            $nextOfkin->save();
-
-            $response = ['status' => true, 'message' => 'Data Saved Successfully', 'data' => $nextOfkin];
-            return response($response, 200);
-        }
-    }
+//    /**
+//     * @OA\Post(
+//     * path="/api/nextofkin",
+//     * operationId="NextOfKinCreate",
+//     * tags={"NextOfKin"},
+//     * summary="Save Next of Kin Details",
+//     * description="Saving next of kin details",
+//     *     @OA\RequestBody(
+//     *         @OA\JsonContent(),
+//     *         @OA\MediaType(
+//     *            mediaType="multipart/form-data",
+//     *            @OA\Schema(
+//     *               type="object",
+//     *               required={"next_of_kin_name","next_of_kin_surname","next_of_kin_mobile_num","next_of_kin_nat_id","next_of_kin_date_of_birth", "next_of_kin_gender", "relationship","next_of_kin_address"},
+//     *               @OA\Property(property="next_of_kin_name", type="text"),
+//     *               @OA\Property(property="next_of_kin_surname", type="text"),
+//     *               @OA\Property(property="next_of_kin_mobile_num", type="text"),
+//     *               @OA\Property(property="next_of_kin_nat_id", type="text"),
+//     *               @OA\Property(property="next_of_kin_date_of_birth", type="date"),
+//     *               @OA\Property(property="next_of_kin_gender", type="text"),
+//     *               @OA\Property(property="relationship", type="text"),
+//     *               @OA\Property(property="next_of_kin_address", type="text"),
+//     *            ),
+//     *        ),
+//     *    ),
+//     *      @OA\Response(
+//     *          response=201,
+//     *          description="Next Of Kin Saved Successfully",
+//     *          @OA\JsonContent()
+//     *       ),
+//     *      @OA\Response(
+//     *          response=200,
+//     *          description="Next Of Kin Saved Successfully",
+//     *          @OA\JsonContent()
+//     *       ),
+//     *      @OA\Response(
+//     *          response=422,
+//     *          description="Unprocessable Entity",
+//     *          @OA\JsonContent()
+//     *       ),
+//     *      @OA\Response(response=400, description="Bad request"),
+//     *      @OA\Response(response=404, description="Resource Not Found"),
+//     * )
+//     */
+//    public function store(Request $request)
+//    {
+//        {
+//            $validator = Validator::make($request->all(), [
+//                'next_of_kin_name' => 'required|string|max:255',
+//                'next_of_kin_surname' => 'required|string|max:255',
+//                'next_of_kin_date_of_birth' => 'required|date',
+//                'next_of_kin_mobile_num' => 'required|unique:next_of_kin',
+//                'next_of_kin_gender' => 'required',
+//                'relationship' => 'required',
+//                'next_of_kin_nat_id' => 'required|unique:next_of_kin',
+//                'next_of_kin_address' => 'required|max:255'
+//            ]);
+//            if ($validator->fails()) {
+//                $response = (['status' => false, 'message' => 'There were some problems with your input',
+//                    'data' => $validator->errors()]);
+//                return  response($response,422);
+//            }
+//
+//            $request['user_id'] = Auth::user()->id;
+//            $request['next_of_kin_name'] = $request->input('next_of_kin_name');
+//            $request['next_of_kin_surname'] = $request->input('next_of_kin_surname');
+//            $request['next_of_kin_date_of_birth'] = $request->input('next_of_kin_date_of_birth');
+//            $request['next_of_kin_mobile_num'] = $request->input('next_of_kin_mobile_num');
+//            $request['next_of_kin_gender'] = $request->input('next_of_kin_gender');
+//            $request['relationship'] = $request->input('relationship');
+//            $request['next_of_kin_nat_id'] = $request->input('next_of_kin_nat_id');
+//            $request['next_of_kin_address'] = $request->input('next_of_kin_address');
+//            $nextOfkin = NextOfKin::create($request->toArray());
+//            $nextOfkin->save();
+//
+//            $response = ['status' => true, 'message' => 'Data Saved Successfully', 'data' => $nextOfkin];
+//            return response($response, 200);
+//        }
+//    }
 
     /**
      * @OA\Get(

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\BankingDetails;
+use App\Models\EmploymentDetails;
+use App\Models\NextOfKin;
 use App\Models\UserDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -67,7 +69,10 @@ class ApiUserDetails  extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"tittle","mobile","source_of_income","nat_id","date_of_birth","gender","address","bank","bank_branch","branch_code","acc_name","acc_number","bank_status","acc_type"},
+     *               required={"tittle","mobile","source_of_income","nat_id","date_of_birth","gender","address","bank","bank_branch",
+     *               "branch_code","acc_name","acc_number","bank_status","acc_type","employer","employer_phone","department","grade",
+     *                "approved_status","position_at_work","date_of_employment","employer_address","next_of_kin_name","next_of_kin_surname",
+     *                "next_of_kin_mobile_num","next_of_kin_nat_id","next_of_kin_date_of_birth", "next_of_kin_gender", "relationship","next_of_kin_address"},
      *               @OA\Property(property="tittle", type="text"),
      *               @OA\Property(property="mobile", type="text"),
      *               @OA\Property(property="nat_id", type="text"),
@@ -82,6 +87,24 @@ class ApiUserDetails  extends  Controller
      *               @OA\Property(property="acc_name", type="text"),
      *               @OA\Property(property="acc_number", type="text"),
      *               @OA\Property(property="acc_type", type="text"),
+     *
+     *               @OA\Property(property="employer", type="text"),
+     *               @OA\Property(property="employer_phone", type="text"),
+     *               @OA\Property(property="position_at_work", type="text"),
+     *               @OA\Property(property="grade", type="text"),
+     *               @OA\Property(property="approved_status", type="text"),
+     *               @OA\Property(property="date_of_employment", type="date"),
+     *               @OA\Property(property="employer_address", type="text"),
+     *               @OA\Property(property="department", type="text"),
+     *
+     *               @OA\Property(property="next_of_kin_name", type="text"),
+     *               @OA\Property(property="next_of_kin_surname", type="text"),
+     *               @OA\Property(property="next_of_kin_mobile_num", type="text"),
+     *               @OA\Property(property="next_of_kin_nat_id", type="text"),
+     *               @OA\Property(property="next_of_kin_date_of_birth", type="date"),
+     *               @OA\Property(property="next_of_kin_gender", type="text"),
+     *               @OA\Property(property="relationship", type="text"),
+     *               @OA\Property(property="next_of_kin_address", type="text"),
      *
      *            ),
      *        ),
@@ -123,11 +146,28 @@ class ApiUserDetails  extends  Controller
                 'acc_name' => 'required|unique:banking_details',
                 'acc_number' => 'required|unique:banking_details',
                 'acc_type' => 'required',
+
+                'department' => 'required',
+                'employer' => 'required',
+                'date_of_employment' => 'required|date',
+                'employer_phone' => 'required|unique:employment_details',
+                'grade' => 'required',
+                'position_at_work' => 'required',
+                'employer_address' => 'required|max:255',
+
+                'next_of_kin_name' => 'required|string|max:255',
+                'next_of_kin_surname' => 'required|string|max:255',
+                'next_of_kin_date_of_birth' => 'required|date',
+                'next_of_kin_mobile_num' => 'required|unique:next_of_kin',
+                'next_of_kin_gender' => 'required',
+                'relationship' => 'required',
+                'next_of_kin_nat_id' => 'required|unique:next_of_kin',
+                'next_of_kin_address' => 'required|max:255'
             ]);
             if ($validator->fails()) {
-                 $response = (['status' => false, 'message' => 'There were some problems with your input',
+                $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
-                 return  response($response,422);
+                return  response($response,422);
             }
 
             $user_id = Auth::user()->id;
@@ -144,7 +184,7 @@ class ApiUserDetails  extends  Controller
             $userDetails = UserDetails::create($request->toArray());
             $userDetails->save();
 
-            if($userDetails->save){
+            if ($userDetails->save()){
                 $request['user_id']= $user_id;
                 $request['bank']=  $request->input('bank');
                 $request['bank_branch']=  $request->input('bank_branch');
@@ -158,7 +198,39 @@ class ApiUserDetails  extends  Controller
                 $bankingdetails->save();
             }
 
-            $response = ['status'=>true,'message'=>'Data Saved Successfully','data' => $userDetails];
+            if($bankingdetails->save()){
+
+                $request['user_id'] = $user_id;
+
+                $request['date_of_employment'] = $request->input('date_of_employment');
+                $request['employer_phone'] = $request->input('employer_phone');
+                $request['grade'] = $request->input('grade');
+                $request['approved_status'] = 0;
+                $request['employer_address'] = $request->input('employer_address');
+                $request['department'] = $request->input('department');
+                $request['employer'] = $request->input('employer');
+                $request['position_at_work'] = $request->input('position_at_work');
+                $employmentDetails = EmploymentDetails::create($request->toArray());
+                $employmentDetails->save();
+            }
+
+            if ($employmentDetails->save()){
+                $request['user_id'] =  $user_id;
+                $request['next_of_kin_name'] = $request->input('next_of_kin_name');
+                $request['next_of_kin_surname'] = $request->input('next_of_kin_surname');
+                $request['next_of_kin_date_of_birth'] = $request->input('next_of_kin_date_of_birth');
+                $request['next_of_kin_mobile_num'] = $request->input('next_of_kin_mobile_num');
+                $request['next_of_kin_gender'] = $request->input('next_of_kin_gender');
+                $request['relationship'] = $request->input('relationship');
+                $request['next_of_kin_nat_id'] = $request->input('next_of_kin_nat_id');
+                $request['next_of_kin_address'] = $request->input('next_of_kin_address');
+                $nextOfkin = NextOfKin::create($request->toArray());
+                $nextOfkin->save();
+            }
+
+
+
+            $response = ['status'=>true,'message'=>'Data Saved Successfully','data' => $userDetails,$bankingdetails,$employmentDetails,$nextOfkin];
             return response($response, 200);
         }
     }
@@ -326,8 +398,8 @@ class ApiUserDetails  extends  Controller
         else{
             $approve_userDetails->user_status =1;
             $approve_userDetails->save();
-             $response=(['status' => true, 'message' => 'Loan Approval Successfully ', 'data' => $approve_userDetails]);
-             return  response($response,200);
+            $response=(['status' => true, 'message' => 'Loan Approval Successfully ', 'data' => $approve_userDetails]);
+            return  response($response,200);
         }
 
     }

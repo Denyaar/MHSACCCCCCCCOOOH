@@ -55,7 +55,7 @@ class NextOfKin extends Model
         'next_of_kin_surname',
         'next_of_kin_nat_id',
         'next_of_kin_gender',
-        'date_of_birth',
+        'relationship',
         'next_of_kin_date_of_birth',
         'next_of_kin_address',
     ];
@@ -71,9 +71,9 @@ class NextOfKin extends Model
         'next_of_kin_name'                              => 'string',
         'next_of_kin_mobile_num'                              => 'string',
         'next_of_kin_surname'                              => 'string',
-        'date_of_birth'                        => 'date',
+        'relationship'                                     => 'string',
         'next_of_kin_gender'                              => 'string',
-        'next_of_kin_date_of_birth'                           => 'string',
+        'next_of_kin_date_of_birth'                        => 'date',
         'next_of_kin_nat_id'                              => 'string',
         'next_of_kin_address'                             => 'string',
 

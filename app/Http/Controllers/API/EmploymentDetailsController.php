@@ -51,86 +51,86 @@ class EmploymentDetailsController extends  Controller
     {
 
     }
-
-    /**
-     * @OA\Post(
-     * path="/api/employmentdetails",
-     * operationId="EmploymentDetailsCreate",
-     * tags={"EmploymentDetails"},
-     * summary="Save Employment  Details",
-     * description="Saving Employment  details",
-     *     @OA\RequestBody(
-     *         @OA\JsonContent(),
-     *         @OA\MediaType(
-     *            mediaType="multipart/form-data",
-     *            @OA\Schema(
-     *               type="object",
-     *               required={"employer","employer_phone","department","grade","approved_status","position_at_work","date_of_employment","employer_address"},
-     *               @OA\Property(property="employer", type="text"),
-     *               @OA\Property(property="employer_phone", type="text"),
-     *               @OA\Property(property="position_at_work", type="text"),
-     *               @OA\Property(property="grade", type="text"),
-     *               @OA\Property(property="approved_status", type="text"),
-     *               @OA\Property(property="date_of_employment", type="date"),
-     *               @OA\Property(property="employer_address", type="text"),
-     *               @OA\Property(property="department", type="text"),
-     *            ),
-     *        ),
-     *    ),
-     *      @OA\Response(
-     *          response=201,
-     *          description="User Details Saved Successfully",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="User Details Saved Successfully",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(
-     *          response=422,
-     *          description="Unprocessable Entity",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(response=400, description="Bad request"),
-     *      @OA\Response(response=404, description="Resource Not Found"),
-     * )
-     */
-    public function store(Request $request)
-    {
-        {
-            $validator = Validator::make($request->all(), [
-                'department' => 'required',
-                'employer' => 'required',
-                'date_of_employment' => 'required|date',
-                'employer_phone' => 'required|unique:employment_details',
-                'grade' => 'required',
-                'position_at_work' => 'required',
-                'employer_address' => 'required|max:255'
-            ]);
-            if ($validator->fails()) {
-                $response = (['status' => false, 'message' => 'There were some problems with your input',
-                    'data' => $validator->errors()]);
-                return  response($response,422);
-            }
-
-            $request['user_id'] = Auth::user()->id;
-
-            $request['date_of_employment'] = $request->input('date_of_employment');
-            $request['employer_phone'] = $request->input('employer_phone');
-            $request['grade'] = $request->input('grade');
-            $request['approved_status'] = 0;
-            $request['employer_address'] = $request->input('employer_address');
-            $request['department'] = $request->input('department');
-            $request['employer'] = $request->input('employer');
-            $request['position_at_work'] = $request->input('position_at_work');
-            $employmentDetails = EmploymentDetails::create($request->toArray());
-            $employmentDetails->save();
-
-            $response = ['status' => true, 'message' => 'Data Saved Successfully', 'data' => $employmentDetails];
-            return response($response, 200);
-        }
-    }
+//
+//    /**
+//     * @OA\Post(
+//     * path="/api/employmentdetails",
+//     * operationId="EmploymentDetailsCreate",
+//     * tags={"EmploymentDetails"},
+//     * summary="Save Employment  Details",
+//     * description="Saving Employment  details",
+//     *     @OA\RequestBody(
+//     *         @OA\JsonContent(),
+//     *         @OA\MediaType(
+//     *            mediaType="multipart/form-data",
+//     *            @OA\Schema(
+//     *               type="object",
+//     *               required={"employer","employer_phone","department","grade","approved_status","position_at_work","date_of_employment","employer_address"},
+//     *               @OA\Property(property="employer", type="text"),
+//     *               @OA\Property(property="employer_phone", type="text"),
+//     *               @OA\Property(property="position_at_work", type="text"),
+//     *               @OA\Property(property="grade", type="text"),
+//     *               @OA\Property(property="approved_status", type="text"),
+//     *               @OA\Property(property="date_of_employment", type="date"),
+//     *               @OA\Property(property="employer_address", type="text"),
+//     *               @OA\Property(property="department", type="text"),
+//     *            ),
+//     *        ),
+//     *    ),
+//     *      @OA\Response(
+//     *          response=201,
+//     *          description="User Details Saved Successfully",
+//     *          @OA\JsonContent()
+//     *       ),
+//     *      @OA\Response(
+//     *          response=200,
+//     *          description="User Details Saved Successfully",
+//     *          @OA\JsonContent()
+//     *       ),
+//     *      @OA\Response(
+//     *          response=422,
+//     *          description="Unprocessable Entity",
+//     *          @OA\JsonContent()
+//     *       ),
+//     *      @OA\Response(response=400, description="Bad request"),
+//     *      @OA\Response(response=404, description="Resource Not Found"),
+//     * )
+//     */
+//    public function store(Request $request)
+//    {
+//        {
+//            $validator = Validator::make($request->all(), [
+//                'department' => 'required',
+//                'employer' => 'required',
+//                'date_of_employment' => 'required|date',
+//                'employer_phone' => 'required|unique:employment_details',
+//                'grade' => 'required',
+//                'position_at_work' => 'required',
+//                'employer_address' => 'required|max:255'
+//            ]);
+//            if ($validator->fails()) {
+//                $response = (['status' => false, 'message' => 'There were some problems with your input',
+//                    'data' => $validator->errors()]);
+//                return  response($response,422);
+//            }
+//
+//            $request['user_id'] = Auth::user()->id;
+//
+//            $request['date_of_employment'] = $request->input('date_of_employment');
+//            $request['employer_phone'] = $request->input('employer_phone');
+//            $request['grade'] = $request->input('grade');
+//            $request['approved_status'] = 0;
+//            $request['employer_address'] = $request->input('employer_address');
+//            $request['department'] = $request->input('department');
+//            $request['employer'] = $request->input('employer');
+//            $request['position_at_work'] = $request->input('position_at_work');
+//            $employmentDetails = EmploymentDetails::create($request->toArray());
+//            $employmentDetails->save();
+//
+//            $response = ['status' => true, 'message' => 'Data Saved Successfully', 'data' => $employmentDetails];
+//            return response($response, 200);
+//        }
+//    }
 
     /**
      * @OA\Get(
