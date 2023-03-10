@@ -50,6 +50,7 @@ class Loan extends Model
      * @var array
      */
     protected $fillable = [
+        'user_id',
         'loan_name',
         'type',
         'loan_purpose',
@@ -57,7 +58,10 @@ class Loan extends Model
         'status',
         'applied_date',
         'approved_date',
-        'monthly_installments',
+        'basic_salary',
+        'net_salary',
+        'other_income',
+        'approved_installments',
         'repayment_period',
     ];
 
@@ -68,21 +72,25 @@ class Loan extends Model
      */
     protected $casts = [
         'id'                                  => 'integer',
+        'user_id'                              => 'integer',
         'loan_name'                           => 'string',
         'loan_purpose'                        => 'string',
         'type'                               => 'string',
         'amount'                             => 'string',
+        'basic_salary'                             => 'string',
+        'net_salary'                             => 'string',
+        'other_income'                             => 'string',
         'status'                             => 'boolean',
         'applied_date'                       => 'datetime',
         'approved_date'                      => 'datetime',
-        'monthly_installments'               => 'string',
+        'approved_installments'               => 'string',
         'repayment_period'                   => 'string',
 
     ];
 
-    public function Users()
+    public function User()
     {
-        return $this->belongsToMany(User::class, 'user_loan');
+        return $this->belongsTo(User::class, 'user_id','id');
     }
 
 

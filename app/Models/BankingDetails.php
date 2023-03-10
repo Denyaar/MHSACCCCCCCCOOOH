@@ -55,7 +55,7 @@ class BankingDetails extends Model
         'bank_branch',
         'branch_code',
         'acc_name',
-        'status',
+        'bank_status',
         'acc_number',
         'acc_type',
     ];
@@ -72,7 +72,7 @@ class BankingDetails extends Model
         'bank_branch'                           => 'string',
         'branch_code'                           => 'string',
         'acc_name'                             => 'string',
-        'status'                             => 'boolean',
+        'bank_status'                             => 'boolean',
         'acc_number'                          => 'string',
         'acc_type'                            => 'string',
     ];

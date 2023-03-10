@@ -50,14 +50,14 @@ class NextOfKin extends Model
      */
     protected $fillable = [
         'user_id',
-        'name',
-        'mobile_num',
-        'surname',
-        'nat_id',
-        'gender',
-        'date_of_birth',
+        'next_of_kin_name',
+        'next_of_kin_mobile_num',
+        'next_of_kin_surname',
+        'next_of_kin_nat_id',
+        'next_of_kin_gender',
         'relationship',
-        'address',
+        'next_of_kin_date_of_birth',
+        'next_of_kin_address',
     ];
 
     /**
@@ -68,14 +68,14 @@ class NextOfKin extends Model
     protected $casts = [
         'id'                                  => 'integer',
         'user_id'                             => 'integer',
-        'name'                              => 'string',
-        'mobile_num'                              => 'string',
-        'surname'                              => 'string',
-        'date_of_birth'                        => 'date',
-        'gender'                              => 'string',
-        'relationship'                           => 'string',
-        'nat_id'                              => 'string',
-        'address'                             => 'string',
+        'next_of_kin_name'                              => 'string',
+        'next_of_kin_mobile_num'                              => 'string',
+        'next_of_kin_surname'                              => 'string',
+        'relationship'                                     => 'string',
+        'next_of_kin_gender'                              => 'string',
+        'next_of_kin_date_of_birth'                        => 'date',
+        'next_of_kin_nat_id'                              => 'string',
+        'next_of_kin_address'                             => 'string',
 
 
     ];

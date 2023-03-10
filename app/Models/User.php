@@ -109,9 +109,9 @@ class User extends Authenticatable
         'deleted_ip_address'                => 'string',
     ];
 
-    public function Loan()
+    public function User()
     {
-        return $this->belongsToMany(Loan::class, 'user_loan');
+        return $this->hasMany(Loan::class, 'user_id','id');
     }
 
     public function sendPasswordResetNotification($token){
