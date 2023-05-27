@@ -239,7 +239,7 @@ class ApiAuthController extends Controller
 
 
                 $userDetails = DB::table('user_details')->where('user_id','==',$user->id)->get();
-                $countUserDetails = [$userDetails->count()];
+                $countUserDetails = $userDetails->count();
 
                 $token = $user->createToken('MHSACCO Password Grant Client')->accessToken;
                 $response = ["status"=>true,'data' => $user, 'user-info'=>$countUserDetails, 'token' => $token];
