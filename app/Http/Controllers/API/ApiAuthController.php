@@ -232,15 +232,17 @@ class ApiAuthController extends Controller
 
 
 
+
+
         if ($user) {
             if (Hash::check($request->password, $user->password)) {
 
 
                 $userDetails = DB::table('user_details')->where('user_id','==',$user->id)->get();
-                $countUserDetails = $userDetails->count();
+                $countUserDetails = [$userDetails->count()];
 
                 $token = $user->createToken('MHSACCO Password Grant Client')->accessToken;
-                $response = ["status"=>true,'data' => [$user,$countUserDetails], 'token' => $token];
+                $response = ["status"=>true,'data' => $user, 'user-info'=>$countUserDetails, 'token' => $token];
 
                 return response($response, 200);
             } else {
