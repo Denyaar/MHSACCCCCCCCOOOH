@@ -4,8 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserDetails;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
@@ -16,6 +18,7 @@ use jeremykenedy\LaravelRoles\Models\Role;
 use jeremykenedy\LaravelRoles\Traits\HasRoleAndPermission;
 use Nette\Schema\ValidationException;
 use OpenApi\Annotations as OA;
+use PHPUnit\Framework\Constraint\Count;
 
 class ApiAuthController extends Controller
 {
@@ -225,10 +228,22 @@ class ApiAuthController extends Controller
         }
 
         $user = User::where('pay_number', $request->pay_number)->first();
+
+
+
+
+
+
         if ($user) {
             if (Hash::check($request->password, $user->password)) {
+
+
+                $userDetails = DB::table('user_details')->where('user_id','==',$user->id)->get();
+                $countUserDetails = $userDetails->count();
+
                 $token = $user->createToken('MHSACCO Password Grant Client')->accessToken;
-                $response = ["status"=>true,'data' => $user, 'token' => $token];
+                $response = ["status"=>true,'data' => $user, 'user-info'=>$countUserDetails, 'token' => $token];
+
                 return response($response, 200);
             } else {
                 $response = ["status"=>false,"message" => "Password mismatch"];

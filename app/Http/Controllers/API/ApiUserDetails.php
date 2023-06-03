@@ -9,6 +9,8 @@ use App\Models\NextOfKin;
 use App\Models\UserDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use OpenApi\Annotations as OA;
 
@@ -69,7 +71,7 @@ class ApiUserDetails  extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"tittle","mobile","source_of_income","nat_id","date_of_birth","gender","address","bank","bank_branch",
+     *               required={"tittle","mobile","source_of_income","copy_of_nat_id","nat_id","date_of_birth","gender","address","bank","bank_branch",
      *               "branch_code","acc_name","acc_number","bank_status","acc_type","employer","employer_phone","department","grade",
      *                "approved_status","position_at_work","date_of_employment","employer_address","next_of_kin_name","next_of_kin_surname",
      *                "next_of_kin_mobile_num","next_of_kin_nat_id","next_of_kin_date_of_birth", "next_of_kin_gender", "relationship","next_of_kin_address"},
@@ -80,6 +82,7 @@ class ApiUserDetails  extends  Controller
      *               @OA\Property(property="gender", type="text"),
      *               @OA\Property(property="address", type="text"),
      *               @OA\Property(property="source_of_income", type="text"),
+     *               @OA\Property(property="copy_of_nat_id", type="text"),
      *
      *               @OA\Property(property="bank", type="text"),
      *               @OA\Property(property="bank_branch", type="text"),
@@ -139,6 +142,8 @@ class ApiUserDetails  extends  Controller
                 'gender' => 'required',
                 'nat_id' => 'required|unique:user_details',
                 'address' => 'required|max:255',
+                'copy_of_nat_id'  => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:4096|unique:requirements',
+
 
                 'bank' => 'required',
                 'bank_branch' => 'required',
@@ -170,6 +175,19 @@ class ApiUserDetails  extends  Controller
                 return  response($response,422);
             }
 
+
+            $id_name = $request->file('copy_of_nat_id')->getClientOriginalName();
+
+            if ($request->file('copy_of_nat_id')->isValid()) {
+                $idPhoto = $request->file('copy_of_nat_id');
+                Storage::disk('public')->put('user-ids/' . $id_name, File::get($idPhoto));
+            } else {
+                $response=['status' => false, 'message' => 'Invalid  photo',
+                    'data' => $validator->errors()];
+                return  response($response,415);
+            }
+
+
             $user_id = Auth::user()->id;
 
             $request['user_id']=$user_id;
@@ -181,6 +199,8 @@ class ApiUserDetails  extends  Controller
             $request['source_of_income']=  $request->input('source_of_income');
             $request['tittle']=  $request->input('tittle');
             $request['nat_id']=  $request->input('nat_id');
+            $request['copy_of_nat_id']= $id_name;
+
             $userDetails = UserDetails::create($request->toArray());
             $userDetails->save();
 

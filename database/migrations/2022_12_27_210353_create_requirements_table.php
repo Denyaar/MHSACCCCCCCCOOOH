@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('payslip')->nullable();
-            $table->string('copy_of_nat_id')->nullable();
+            //$table->string('copy_of_nat_id')->nullable();
             $table->string('bank_statement')->nullable();
             $table->timestamps();
 

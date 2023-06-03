@@ -58,86 +58,86 @@ class RequirementsController extends Controller
         //
     }
 
-
-    /**
-     * @OA\Post(
-     * path="/api/requirements_nat_id",
-     * operationId="usernatidstore",
-     * tags={"Requirements"},
-     * summary="Upload User National I.D",
-     * description="Saving User  National I.D",
-     *     @OA\RequestBody(
-     *         @OA\JsonContent(),
-     *         @OA\MediaType(
-     *            mediaType="multipart/form-data",
-     *            @OA\Schema(
-     *               type="object",
-     *               required={"user_id","copy_of_nat_id"},
-     *               @OA\Property(property="user_id", type="text"),
-     *               @OA\Property(property="copy_of_nat_id", type="file"),
-     *            ),
-     *        ),
-     *    ),
-     *      @OA\Response(
-     *          response=201,
-     *          description="User National I.D Saved Successfully",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="User National I.D Saved Successfully",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(
-     *          response=422,
-     *          description="Unprocessable Entity",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(response=400, description="Bad request"),
-     *      @OA\Response(response=404, description="Resource Not Found"),
-     * )
-     */
-
-    public function store(Request $request)
-    {
-
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'user_id'         => 'required|unique:requirements',
-                'copy_of_nat_id'  => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:4096|unique:requirements',
-            ]
-        );
-
-        if ($validator->fails()) {
-            $response=['status' => false, 'message' => 'Invalid  file',
-                'data' => $validator->errors()];
-            return  response($response,417);
-        }
-
-        $id_name = $request->file('copy_of_nat_id')->getClientOriginalName();
-
-        if ($request->file('copy_of_nat_id')->isValid()) {
-            $idPhoto = $request->file('copy_of_nat_id');
-            Storage::disk('public')->put('user-ids/' . $id_name, File::get($idPhoto));
-        } else {
-            $response=['status' => false, 'message' => 'Invalid  photo',
-                'data' => $validator->errors()];
-            return  response($response,415);
-        }
-
-        $requirements = Requirements::create([
-            'user_id'              => $request->input('user_id'),
-            'copy_of_nat_id'       => $id_name,
-        ]);
-        $requirements->save();
-
-        if($requirements->save()){
-            $response = ['status'=>true,'message'=>'User National Id Uploaded Successfully','data' =>$requirements];
-            return response($response, 200);
-        }
-
-    }
+//
+//    /**
+//     * @OA\Post(
+//     * path="/api/requirements_nat_id",
+//     * operationId="usernatidstore",
+//     * tags={"Requirements"},
+//     * summary="Upload User National I.D",
+//     * description="Saving User  National I.D",
+//     *     @OA\RequestBody(
+//     *         @OA\JsonContent(),
+//     *         @OA\MediaType(
+//     *            mediaType="multipart/form-data",
+//     *            @OA\Schema(
+//     *               type="object",
+//     *               required={"user_id","copy_of_nat_id"},
+//     *               @OA\Property(property="user_id", type="text"),
+//     *               @OA\Property(property="copy_of_nat_id", type="file"),
+//     *            ),
+//     *        ),
+//     *    ),
+//     *      @OA\Response(
+//     *          response=201,
+//     *          description="User National I.D Saved Successfully",
+//     *          @OA\JsonContent()
+//     *       ),
+//     *      @OA\Response(
+//     *          response=200,
+//     *          description="User National I.D Saved Successfully",
+//     *          @OA\JsonContent()
+//     *       ),
+//     *      @OA\Response(
+//     *          response=422,
+//     *          description="Unprocessable Entity",
+//     *          @OA\JsonContent()
+//     *       ),
+//     *      @OA\Response(response=400, description="Bad request"),
+//     *      @OA\Response(response=404, description="Resource Not Found"),
+//     * )
+//     */
+//
+//    public function store(Request $request)
+//    {
+//
+//        $validator = Validator::make(
+//            $request->all(),
+//            [
+//                'user_id'         => 'required|unique:requirements',
+//                'copy_of_nat_id'  => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:4096|unique:requirements',
+//            ]
+//        );
+//
+//        if ($validator->fails()) {
+//            $response=['status' => false, 'message' => 'Invalid  file',
+//                'data' => $validator->errors()];
+//            return  response($response,417);
+//        }
+//
+//        $id_name = $request->file('copy_of_nat_id')->getClientOriginalName();
+//
+//        if ($request->file('copy_of_nat_id')->isValid()) {
+//            $idPhoto = $request->file('copy_of_nat_id');
+//            Storage::disk('public')->put('user-ids/' . $id_name, File::get($idPhoto));
+//        } else {
+//            $response=['status' => false, 'message' => 'Invalid  photo',
+//                'data' => $validator->errors()];
+//            return  response($response,415);
+//        }
+//
+//        $requirements = Requirements::create([
+//            'user_id'              => $request->input('user_id'),
+//            'copy_of_nat_id'       => $id_name,
+//        ]);
+//        $requirements->save();
+//
+//        if($requirements->save()){
+//            $response = ['status'=>true,'message'=>'User National Id Uploaded Successfully','data' =>$requirements];
+//            return response($response, 200);
+//        }
+//
+//    }
 
 
     /**
