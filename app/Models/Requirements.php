@@ -51,7 +51,7 @@ class Requirements extends Model
     protected $fillable = [
         'user_id',
         'payslip',
-        'copy_of_nat_id',
+        //'copy_of_nat_id',
         'bank_statement',
 
     ];
@@ -65,7 +65,7 @@ class Requirements extends Model
         'id'                                    => 'integer',
         'user_id'                                    => 'integer',
         'payslip'                                    => 'string',
-        'copy_of_nat_id'                                    => 'string',
+      //  'copy_of_nat_id'                                    => 'string',
         'bank_statement'                                    => 'string',
     ];
 

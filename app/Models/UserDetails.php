@@ -59,6 +59,7 @@ class UserDetails extends Model
         'nat_id',
         'address',
         'source_of_income',
+        'copy_of_nat_id'
     ];
 
     /**
@@ -73,10 +74,11 @@ class UserDetails extends Model
         'tittle'                              => 'string',
         'date_of_birth'                        => 'date',
         'gender'                              => 'string',
-        'user_status'                              => 'boolean',
+        'user_status'                         => 'boolean',
         'nat_id'                              => 'string',
         'address'                             => 'string',
         'source_of_income'                    => 'string',
+        'copy_of_nat_id'                    => 'string',
 
     ];
 

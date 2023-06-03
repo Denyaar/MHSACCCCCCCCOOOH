@@ -80,7 +80,7 @@ Route::group(['api','middleware' => ['json.response']], function () {
             Route::delete('/deductions/{id}', [DeductionsController::class, 'destroy']);
 
             Route::get('/requirements', [RequirementsController::class, 'index']);
-            Route::post('/requirements_nat_id', [RequirementsController::class, 'store']);
+           // Route::post('/requirements_nat_id', [RequirementsController::class, 'store']);
             Route::post('/requirements_payslip', [RequirementsController::class, 'storePaySlip']);
             Route::post('/requirements_bank_statement', [RequirementsController::class, 'storeBankStatement']);
             Route::delete('/requirements/{id}', [RequirementsController::class, 'destroy']);

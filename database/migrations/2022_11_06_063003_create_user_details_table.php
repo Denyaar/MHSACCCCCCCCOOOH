@@ -24,6 +24,7 @@ return new class extends Migration
             $table->date('date_of_birth');
             $table->string('address');
             $table->string('source_of_income');
+            $table->string('copy_of_nat_id');
             $table->timestamps();
             $table->softDeletes();
 
