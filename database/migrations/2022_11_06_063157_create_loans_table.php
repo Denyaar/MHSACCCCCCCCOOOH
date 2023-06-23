@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('other_income');
             $table->string('approved_installments');
             $table->string('loan_purpose');
+            $table->string('payslip');
             $table->string('repayment_period')->nullable();
             $table->dateTime('applied_date');
             $table->dateTime('approved_date');

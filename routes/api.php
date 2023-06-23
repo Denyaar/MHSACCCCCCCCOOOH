@@ -42,6 +42,7 @@ Route::group(['api','middleware' => ['json.response']], function () {
 
 
             Route::get('/userdetails', [ApiUserDetails::class, 'index']);
+            Route::get('/authuserdetails', [ApiUserDetails::class, 'getAuthUserDetailsAll']);
             Route::post('/userdetails', [ApiUserDetails::class, 'store']);
             Route::put('/userdetails/{id}', [ApiUserDetails::class, 'update']);
             Route::get('/userdetails/{id}', [ApiUserDetails::class, 'show']);
@@ -79,11 +80,11 @@ Route::group(['api','middleware' => ['json.response']], function () {
             Route::put('/deductions/{id}', [DeductionsController::class, 'update']);
             Route::delete('/deductions/{id}', [DeductionsController::class, 'destroy']);
 
-            Route::get('/requirements', [RequirementsController::class, 'index']);
-           // Route::post('/requirements_nat_id', [RequirementsController::class, 'store']);
-            Route::post('/requirements_payslip', [RequirementsController::class, 'storePaySlip']);
-            Route::post('/requirements_bank_statement', [RequirementsController::class, 'storeBankStatement']);
-            Route::delete('/requirements/{id}', [RequirementsController::class, 'destroy']);
+//            Route::get('/requirements', [RequirementsController::class, 'index']);
+//           // Route::post('/requirements_nat_id', [RequirementsController::class, 'store']);
+//            Route::post('/requirements_payslip', [RequirementsController::class, 'storePaySlip']);
+//            Route::post('/requirements_bank_statement', [RequirementsController::class, 'storeBankStatement']);
+//            Route::delete('/requirements/{id}', [RequirementsController::class, 'destroy']);
 
 
         });

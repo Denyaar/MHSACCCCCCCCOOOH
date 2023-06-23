@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Loan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use OpenApi\Annotations as OA;
 
@@ -66,7 +68,7 @@ class LoansController extends  Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"user_id","loan_name","loan_purpose","basic_salary","net_salary","other_income","approved_installments","repayment_period","type","applied_date", "amount","approved_date","status"},
+     *               required={"user_id","loan_name","loan_purpose","payslip","basic_salary","net_salary","other_income","approved_installments","repayment_period","type","applied_date", "amount","approved_date","status"},
      *               @OA\Property(property="user_id", type="text"),
      *               @OA\Property(property="loan_name", type="text"),
      *               @OA\Property(property="loan_purpose", type="text"),
@@ -76,6 +78,7 @@ class LoansController extends  Controller
      *               @OA\Property(property="amount", type="text"),
      *               @OA\Property(property="basic_salary", type="text"),
      *               @OA\Property(property="net_salary", type="text"),
+     *               @OA\Property(property="payslip", type="file"),
      *               @OA\Property(property="other_income", type="text"),
      *               @OA\Property(property="status", type="text"),
      *               @OA\Property(property="approved_installments", type="text"),
@@ -117,13 +120,28 @@ class LoansController extends  Controller
                 'other_income' => 'required',
                 'amount' => 'required',
                 'type' => 'required',
-                'repayment_period' => 'required'
+                'repayment_period' => 'required',
+                'payslip' => 'required|mimes:csv,txt,xlx,xls,pdf,jpeg,png,jpg,gif,svg|max:2048|unique:requirements',
+
             ]);
             if ($validator->fails()) {
                 $response = (['status' => false, 'message' => 'There were some problems with your input',
                     'data' => $validator->errors()]);
                 return  response($response,422);
             }
+
+            $payslip_name = $request->file('payslip')->getClientOriginalName();
+
+            if ($request->file('payslip')->isValid()) {
+                $payslip_pdf = $request->file('payslip');
+                Storage::disk('public')->put('payslip/' . $payslip_name, File::get($payslip_pdf));
+            } else {
+                $response=['status' => false, 'message' => 'Invalid payslip document',
+                    'data' => $validator->errors()];
+                return  response($response,415);
+            }
+
+
 
             $request['user_id']=  $request->input('user_id');
             $request['applied_date']=  $request->input('applied_date');
@@ -134,6 +152,7 @@ class LoansController extends  Controller
             $request['basic_salary']=  $request->input('basic_salary');
             $request['net_salary']=  $request->input('net_salary');
             $request['other_income']=  $request->input('other_income');
+            $request['payslip']= $payslip_name;
             $request['status']= 0;
             $request['approved_installments']=  $request->input('approved_installments');
             $request['loan_name']=  $request->input('loan_name');

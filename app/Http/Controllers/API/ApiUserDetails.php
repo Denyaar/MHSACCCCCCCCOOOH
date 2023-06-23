@@ -42,9 +42,50 @@ class ApiUserDetails  extends  Controller
     {
         $userDetails = UserDetails::withoutTrashed()
             ->whereNull('deleted_at')->get();
-
-        $response = ['status'=>true,'message'=>'','data' => $userDetails];
+        $response = ['status'=>true,'message'=>'All Users Details','data' => $userDetails];
         return response($response, 200);
+
+    }
+
+
+    /**
+     * @OA\Get(
+     *      path="/api/authuserdetails",
+     *      operationId="getauthuserdetailsList",
+     *      tags={"UserDetails"},
+     *      summary="Get Auth User  Details{User Details, Banking Details, Employment Details and Next of Kin Details}",
+     *      description="Returns All logged users details",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
+     */
+
+    public  function getAuthUserDetailsAll(){
+
+        $user_id  = Auth::user()->id;
+
+        {
+            $userDetails = UserDetails::where('user_id',$user_id)->firstOrFail();
+            $userBankingDetails = BankingDetails::where('user_id',$user_id)->firstOrFail();
+            $employmentDetails = EmploymentDetails::where('user_id',$user_id)->firstOrFail();
+            $nextOfKinDetails = NextOfKin::where('user_id',$user_id)->firstOrFail();
+        }
+
+
+        $response  = ['status'=>true,'message'=>'All Auth User Details', 'data'=>[$userDetails,$userBankingDetails,$employmentDetails,$nextOfKinDetails]];
+
+        return response ($response,200);
 
     }
 

@@ -63,6 +63,7 @@ class Loan extends Model
         'other_income',
         'approved_installments',
         'repayment_period',
+        'payslip',
     ];
 
     /**
@@ -85,6 +86,7 @@ class Loan extends Model
         'approved_date'                      => 'datetime',
         'approved_installments'               => 'string',
         'repayment_period'                   => 'string',
+        'payslip'                                    => 'string',
 
     ];
 
